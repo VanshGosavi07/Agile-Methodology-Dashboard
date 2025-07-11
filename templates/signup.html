@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Registration</title>
+    <link rel="stylesheet" href="../static/css/signup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">ADD A NEW USER</h1>
+      <form action="{{ url_for('auth.add_user') }}" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone_number"
+            placeholder="Enter your phone number"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select id="role" name="role" required>
+            <option value="">Select a role</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+            <option value="scrum master">Scrum Master</option>
+            <option value="team member">Team Member</option>
+            <option value="product owner">Product Owner</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="dob">Date of Birth</label>
+          <input
+            type="date"
+            id="dob"
+            name="dob"
+            placeholder="dd-mm-yyyy"
+            required
+          />
+        </div>
+        <div class="form-group">
+
+        <label for="file">Choose a profile picture:</label>
+        <input type="file" name="file" id="file" accept="image/*" required>
+        </div>
+        <button type="submit" class="submit-btn">SUBMIT</button>
+        <div class="login-link">
+          Already have an account? <a href="{{ url_for('auth.login') }}">Login</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

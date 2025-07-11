@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADD PROJECT</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/addproject.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+
+<body>
+     <!-- Header -->
+     <div class="header">
+          <img
+          src="{{ url_for('static',filename='images/logo3.jpg') }}"
+          alt="Logo"
+          class="profile-pic"
+      />
+        <h1>AGILE PROJECT MANAGEMENT DASHBOARD</h1>
+        
+      </div>
+
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="greeting">
+          <span>Hello, {{ user_name }}!</span>
+
+          <div class="dropdown">
+            <a href="{{url_for('auth.login')}}"
+              ><img
+                src="{{ url_for('static', filename=current_user.profile_picture) }}"
+                alt="Profile"
+                class="profile-pic"
+            /></a>
+            <div class="dropdown-content">
+              <a href="{{url_for('auth.logout')}}" class="logout">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    
+
+    <!-- Hidden Form -->
+    <div id="form-container" style="display: block;">
+      <h1 id="add">ADD PROJECT DETAILS</h1>
+        <form id="project-form" action="/submit" method="post">
+          <button class="back-button"><a href="/projects/{{user_role}}/{{user_id}}">Back</a></button>
+            <div>
+                <label for="product-owner-id">Product Owner</label>
+                <select id="product-owner-id" name="product_owner_id" required>
+                    <option value="">Select Product Owner</option>
+                </select>
+
+                <label for="select-user">Team Members</label>
+                <div class="custom-dropdown">
+                    <div class="dropdown-header" onclick="toggleDropdown()">
+                        Select Team Members
+                        <span>▼</span>
+                    </div>
+                    <div id="userDropdownList" class="dropdown-list">
+                        <!-- Users will be dynamically populated here -->
+                    </div>
+                    <input type="hidden" id="selected-user-ids" name="selected_user_ids" value="">
+                </div><br>
+
+                <label for="project-name">Project Name</label>
+                <input type="text" id="project-name" name="project_name" required>
+
+                <label for="project-desc">Project Description</label>
+                <textarea id="project-desc" name="project_description"></textarea>
+
+                <label for="start-date">Start Date</label>
+                <input type="date" id="start-date" name="start_date" required>
+
+                <label for="end-date">End Date</label>
+                <input type="date" id="end-date" name="end_date" required>
+
+                <label for="revised-end-date">Revised End Date</label>
+                <input type="date" id="revised-end-date" name="revised_end_date">
+
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                    <option value="Active">Active</option>
+                    <option value="Completed">Completed</option>
+                    <option value="On Hold">On-Hold</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div>
+                <h2>Sprint Details</h2>
+                <label for="num-sprints">Number of Sprints</label>
+                <input type="number" id="num-sprints" min="1" required>
+                <button type="button" onclick="addSprintFields()">Add Sprints</button>
+            </div>
+
+            <div id="sprint-container"></div>
+
+            <button type="button" onclick="submitForm1()">Submit</button>
+        </form>
+    </div>
+    <div class="footer">
+        &copy; 2024 Agile Project Management Dashboard. All Rights Reserved.
+    </div>
+</body>
+</html>

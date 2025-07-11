@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agile Project Management Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e, #1a1a2e);
+        color: #fff;
+        min-height: 100vh;
+        animation: gradientBG 15s ease infinite;
+        background-size: 400% 400%;
+        padding-top: 80px;
+        padding-bottom: 60px;
+      }
+
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      } 
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        background: rgb(92, 56, 175);
+        color: white;
+        padding: 20px 40px;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+      }
+      .logo {
+        height: 50px;
+        width: auto;
+        margin-right: 15px;
+    }
+
+      .profile {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      .profile-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .dashboard-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Changed to 2 columns */
+        gap: 30px;
+        padding: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: rgba(26, 26, 46, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 25px;
+        padding: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transition: all 0.4s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0)
+        );
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .card img {
+        width: 100%;
+        height: auto;
+        max-width: 500px;
+        object-fit: contain;
+        margin-top: 15px;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 45px rgba(0, 0, 0, 0.4);
+        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(26, 26, 46, 0.8);
+      }
+
+      .card h3 {
+        margin-bottom: 20px;
+        font-size: 1.4rem;
+        color: #fff;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 12px;
+        width: 100%;
+        text-align: center;
+      }
+
+      
+
+      /* Footer */
+      .footer {
+        background: rgb(92, 56, 175);
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 1rem;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+      }
+
+      @media (max-width: 1200px) {
+        .dashboard-container {
+          grid-template-columns: 1fr;
+          padding: 20px;
+        }
+        .card {
+          width: 100%;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+        .metrics-row {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .metrics-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .header {
+          font-size: 1.5rem;
+          padding: 15px 20px;
+        }
+        .profile {
+          font-size: 1rem;
+        }
+        .profile-pic {
+          width: 30px;
+          height: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header section remains unchanged -->
+    <div class="header">
+      <img src="{{ url_for('static', filename='/images/logo.png') }}" alt="Logo" class="logo">
+      AGILE PROJECT MANAGEMENT DASHBOARD
+      <div class="profile">
+        <span>Hello Vansh!</span>
+        <img
+          src=rc="{{ url_for('static', filename='/profile.jpg') }}"
+          alt="Profile Picture"
+          class="profile-pic"
+        />
+      </div>
+    </div>
+
+
+    <!-- Dashboard container with charts -->
+    <div class="dashboard-container">
+      <div class="card">
+        <h3>Burn Down Chart</h3>
+        <img
+          src="data:image/png;base64,{{ burn_down_url }}"
+          class="img-fluid rounded"
+          alt="Burn-Down Chart"
+        />
+      </div>
+      <div class="card">
+        <h3>Burn Up Chart</h3>
+        <img
+          src="data:image/png;base64,{{ burn_up_url }}"
+          class="img-fluid rounded"
+          alt="Burn-Up Chart"
+        />
+      </div>
+      <div class="card">
+        <h3>Velocity Trend</h3>
+        <img
+          src="data:image/png;base64,{{ velocity_chart_url }}"
+          class="img-fluid rounded"
+          alt="Velocity Chart"
+        />
+      </div>
+      <div class="card">
+        <h3>Sprint Status</h3>
+        <img
+          src="data:image/png;base64,{{ sprint_progress_url }}"
+          class="img-fluid rounded"
+          alt="Sprint Progress Chart"
+        />
+      </div>
+      <div class="card">
+        <h3>Task Status</h3>
+        <img
+          src="data:image/png;base64,{{ donut_chart_url }}"
+          class="img-fluid rounded"
+          alt="Donut Chart"
+        />
+      </div>
+      <div class="card">
+        <h3>Performance chart</h3>
+        <img
+          src="data:image/png;base64,{{ performance_chart_url }}"
+          class="img-fluid rounded"
+          alt="performance Chart"
+        />
+      </div>
+    </div>
+
+    <div class="footer">
+      &copy; 2024 Agile Project Management Dashboard. All Rights Reserved.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Agile Projects{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Agile Projects Overview</h1>
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Project Name</th>
+            <th>Description</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Product Owner</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+        <tr>
+            <td>{{ project.ProjectName }}</td>
+            <td>{{ project.ProjectDescription }}</td>
+            <td>{{ project.StartDate }}</td>
+            <td>{{ project.EndDate }}</td>
+            <td>{{ project.Status }}</td>
+            <td>{{ project.product_owner.Name }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

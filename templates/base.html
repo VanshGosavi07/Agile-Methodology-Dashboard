@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %}</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* General Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background: #f5f5f5;
+        color: #333;
+        padding-top:80px;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        background: rgb(92, 56, 175);
+        color: white;
+        padding: 20px 40px;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+      }
+      .logo {
+        height: 50px;
+        width: auto;
+        margin-right: 15px;
+    }
+
+      /* Profile Section in Header */
+      .profile {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Space between text and picture */
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      .profile-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      /* Footer */
+      .footer {
+        background: rgb(92, 56, 175);
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 1rem;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <div class="header">
+      AGILE PROJECT MANAGEMENT DASHBOARD
+
+      <!-- Profile Section -->
+      <div class="profile">
+        <span>Hello Vansh</span>
+        <img src="static/profile.jpg" alt="Profile Picture" class="profile-pic" />
+      </div>
+    </div>
+
+    <div class="container mt-4">{% block content %}{% endblock %}</div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+      &copy; 2024 Agile Project Management Dashboard. All Rights Reserved.
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

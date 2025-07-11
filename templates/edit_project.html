@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/edit.css') }}">
+
+</head>
+<body>
+        <!-- Header -->
+        <div class="header">
+            <img
+                  src="{{ url_for('static',filename='images/logo3.jpg') }}"
+                  alt="Logo"
+                  class="profile-pic"
+              />
+          <h1>AGILE PROJECT MANAGEMENT DASHBOARD</h1>
+        </div>
+  
+        <!-- Top Bar -->
+        <div class="top-bar">
+          <div class="greeting">
+            <span>Hello, {{ user_name }}!</span>
+  
+            <div class="dropdown">
+              <a href="{{url_for('auth.login')}}"
+                ><img
+                  src="{{ url_for('static', filename=current_user.profile_picture) }}"
+                  alt="Profile"
+                  class="profile-pic"
+              /></a>
+              <div class="dropdown-content">
+                <a href="{{url_for('auth.logout')}}" class="logout">Logout</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <script type="text/javascript">
+        alert("{{ messages[0][1] }}");  // Show success message in a popup
+    </script>
+    {% endif %}
+    {% endwith %}
+
+
+    <div id="form-container">
+        <h1 id="edit">Edit Project Details</h1>
+        <form method="POST">
+            <!-- Project Details -->
+            <button class="back-button"><a href="/projects/{{user_role}}/{{user_id}}">Back</a></button>
+            <div class="sprint-section">
+                <br/>
+                <label for="project_name">Project Name</label>
+                <input type="text" id="project_name" name="project_name" value="{{ project['ProjectName'] }}" required>
+
+                <label for="project_description">Project Description</label>
+                <textarea id="project_description" name="project_description" rows="4" required>{{ project['ProjectDescription'] }}</textarea>
+
+                <label for="start_date">Start Date</label>
+                <input type="date" id="start_date" name="start_date" value="{{ project['StartDate'] }}" required>
+
+                <label for="end_date">End Date</label>
+                <input type="date" id="end_date" name="end_date" value="{{ project['EndDate'] }}" required>
+
+                <label for="revised_end_date">Revised End Date</label>
+                <input type="date" id="revised_end_date" name="revised_end_date" value="{{ project['RevisedEndDate'] }}" >
+
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                    <option value="Active" {% if project['Status'] == 'Active' %}selected{% endif %}>Active</option>
+                    <option value="On Hold" {% if project['Status'] == 'On Hold' %}selected{% endif %}>On Hold</option>
+                    <option value="Completed" {% if project['Status'] == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="Cancelled" {% if project['Status'] == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+
+            <!-- Sprint Sections -->
+            <div id="sprints-container">
+                {% for sprint in project['sprints'] %}
+                <div class="sprint-section" id="sprint-{{ loop.index }}">
+                    <h4>Sprint {{ loop.index }}</h4>
+
+                    <label for="scrum-master-{{ loop.index }}">Scrum Master</label>
+                    <select id="scrum-master-{{ loop.index }}" name="scrum_master_id_{{ loop.index }}" required>
+                        <option value="">Select Scrum Master</option>
+                        {% for scrum_master in scrum_masters %}
+                            <option value="{{ scrum_master.id }}" 
+                                    {% if scrum_master.id == sprint['ScrumMasterID'] %} selected {% endif %}>
+                                {{ scrum_master.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <label for="sprintNo-{{ loop.index }}">SprintNo</label>
+                    <input type="number" id="sprintNo-{{ loop.index }}" name="sprintNo_{{ loop.index }}" value="{{ sprint['SprintNo'] }}" required>
+
+
+                    <!-- Sprint Start Date -->
+                    <label for="sprint-start-date-{{ loop.index }}">Start Date</label>
+                    <input type="date" id="sprint-start-date-{{ loop.index }}" name="sprint_start_date_{{ loop.index }}" value="{{ sprint['StartDate'] }}" required>
+
+                    <!-- Sprint End Date -->
+                    <label for="sprint-end-date-{{ loop.index }}">End Date</label>
+                    <input type="date" id="sprint-end-date-{{ loop.index }}" name="sprint_end_date_{{ loop.index }}" value="{{ sprint['EndDate'] }}" required>
+
+                    <!-- Sprint Velocity -->
+                    <label for="sprint-velocity-{{ loop.index }}">Velocity</label>
+                    <input type="number" id="sprint-velocity-{{ loop.index }}" name="sprint_velocity_{{ loop.index }}" value="{{ sprint['Velocity'] }}" required>
+
+                    <!-- User Stories for the Sprint -->
+                    <div class="user-story-section">
+                        {% for user_story in sprint['user_stories'] %}
+                        <h5>User Story {{ loop.index }}</h5>
+
+                        <label for="planned-sprint-{{ loop.index }}-{{ loop.index0 }}">Planned Sprint</label>
+                        <input type="number" id="planned-sprint-{{ loop.index }}-{{ loop.index0 }}" name="planned_sprint_{{ loop.index }}_{{ loop.index0 }}" value="{{ user_story['PlannedSprint'] }}" required>
+
+                        <label for="actual-sprint-{{ loop.index }}-{{ loop.index0 }}">Actual Sprint</label>
+                        <input type="number" id="actual-sprint-{{ loop.index }}-{{ loop.index0 }}" name="actual_sprint_{{ loop.index }}_{{ loop.index0 }}" value="{{ user_story['ActualSprint'] }}" required>
+
+                        <label for="story-desc-{{ loop.index }}-{{ loop.index0 }}">Description</label>
+                        <textarea id="story-desc-{{ loop.index }}-{{ loop.index0 }}" name="story_desc_{{ loop.index }}_{{ loop.index0 }}" required>{{ user_story['Description'] }}</textarea>
+
+                        <label for="story-points-{{ loop.index }}-{{ loop.index0 }}">Story Points</label>
+                        <input type="number" id="story-points-{{ loop.index }}-{{ loop.index0 }}" name="story_points_{{ loop.index }}_{{ loop.index0 }}" value="{{ user_story['StoryPoint'] }}" required>
+
+                        <label for="moscow-{{ loop.index }}-{{ loop.index0 }}">MoSCoW</label>
+                        <select id="moscow-{{ loop.index }}-{{ loop.index0 }}" name="moscow_{{ loop.index }}_{{ loop.index0 }}" required>
+                            <option value="Must Have" {% if user_story['MOSCOW'] == 'Must Have' %}selected{% endif %}>Must Have</option>
+                            <option value="Should Have" {% if user_story['MOSCOW'] == 'Should Have' %}selected{% endif %}>Should Have</option>
+                            <option value="Could Have" {% if user_story['MOSCOW'] == 'Could Have' %}selected{% endif %}>Could Have</option>
+                            <option value="Won't Have" {% if user_story['MOSCOW'] == "Won't Have" %}selected{% endif %}>Won't Have</option>
+                        </select>
+
+                        <label for="assignee-{{ loop.index }}-{{ loop.index0 }}">Assignee</label>
+                        <input type="text" id="assignee-{{ loop.index }}-{{ loop.index0 }}" name="assignee_{{ loop.index }}_{{ loop.index0 }}" value="{{ user_story['Assignee'] }}" required>
+
+                        <label for="status-{{ loop.index }}-{{ loop.index0 }}">Status</label>
+                        <select id="status-{{ loop.index }}-{{ loop.index0 }}" name="status_{{ loop.index }}_{{ loop.index0 }}" required>
+                            <option value="Not Started" {% if user_story['Status'] == 'Not Started' %}selected{% endif %}>Not Started</option>
+                            <option value="In Progress" {% if user_story['Status'] == 'In Progress' %}selected{% endif %}>In Progress</option>
+                            <option value="Completed" {% if user_story['Status'] == 'Completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        &copy; 2024 Agile Project Management Dashboard. All Rights Reserved.
+    </div>
+
+    <script>
+        // JavaScript for handling dropdown and form interaction
+        function goBack() {
+        window.history.back();
+        }
+        document.querySelectorAll('.dropdown-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const list = this.nextElementSibling;
+                list.classList.toggle('show');
+            });
+        });
+    </script>
+</body>
+</html>
