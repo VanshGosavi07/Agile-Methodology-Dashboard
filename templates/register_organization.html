@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization Registration - Agile Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .plan-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .plan-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .plan-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .plan-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .plan-card h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .plan-card .price {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border-left: 4px solid #3c3;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .plan-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Create Your Organization</h1>
+            <p>Register your organization and then create an admin account to manage it</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('auth.register_organization') }}">
+            <div class="form-group">
+                <label for="org_name">Organization Name *</label>
+                <input type="text" id="org_name" name="org_name" required 
+                       placeholder="e.g., Acme Corporation">
+            </div>
+
+            <div class="form-group">
+                <label for="domain">Company Domain (Optional)</label>
+                <input type="text" id="domain" name="domain" 
+                       placeholder="e.g., acme.com">
+            </div>
+
+            <div class="form-group">
+                <label>Choose Your Plan *</label>
+                <div class="plan-cards">
+                    <div class="plan-card" onclick="selectPlan(this, 'Free')">
+                        <h3>Free</h3>
+                        <p class="price">$0/month</p>
+                        <p>5 Users</p>
+                        <p>3 Projects</p>
+                    </div>
+                    <div class="plan-card" onclick="selectPlan(this, 'Basic')">
+                        <h3>Basic</h3>
+                        <p class="price">$29/month</p>
+                        <p>25 Users</p>
+                        <p>15 Projects</p>
+                    </div>
+                    <div class="plan-card" onclick="selectPlan(this, 'Premium')">
+                        <h3>Premium</h3>
+                        <p class="price">$99/month</p>
+                        <p>100 Users</p>
+                        <p>50 Projects</p>
+                    </div>
+                    <div class="plan-card" onclick="selectPlan(this, 'Enterprise')">
+                        <h3>Enterprise</h3>
+                        <p class="price">Custom</p>
+                        <p>1000+ Users</p>
+                        <p>Unlimited</p>
+                    </div>
+                </div>
+                <input type="hidden" id="subscription_plan" name="subscription_plan" value="Free" required>
+            </div>
+
+            <div class="form-group">
+                <label for="admin_name">Admin Full Name *</label>
+                <input type="text" id="admin_name" name="admin_name" required 
+                       placeholder="John Doe">
+            </div>
+
+            <div class="form-group">
+                <label for="admin_email">Admin Email *</label>
+                <input type="email" id="admin_email" name="admin_email" required 
+                       placeholder="admin@acme.com">
+            </div>
+
+            <div class="form-group">
+                <label for="admin_username">Admin Username *</label>
+                <input type="text" id="admin_username" name="admin_username" required 
+                       placeholder="johndoe">
+            </div>
+
+            <div class="form-group">
+                <label for="admin_password">Admin Password *</label>
+                <input type="password" id="admin_password" name="admin_password" required 
+                       placeholder="••••••••" minlength="8">
+            </div>
+
+            <button type="submit" class="btn-submit">Create Organization</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        function selectPlan(element, plan) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            
+            // Update hidden input
+            document.getElementById('subscription_plan').value = plan;
+        }
+
+        // Select Free plan by default
+        document.addEventListener('DOMContentLoaded', function() {
+            selectPlan(document.querySelector('.plan-card'), 'Free');
+        });
+    </script>
+</body>
+</html>

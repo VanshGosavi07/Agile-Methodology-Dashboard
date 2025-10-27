@@ -1,73 +1,648 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Registration</title>
-    <link rel="stylesheet" href="../static/css/signup.css" />
-  </head>
-  <body>
-    <div class="container">
-      <h1 class="title">ADD A NEW USER</h1>
-      <form action="{{ url_for('auth.add_user') }}" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" required />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required />
-        </div>
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" required />
-        </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Agile Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/unified-theme.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-family);
+        }
         
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required />
-        </div>
-        <div class="form-group">
-          <label for="phone">Phone Number</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone_number"
-            placeholder="Enter your phone number"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="role">Role</label>
-          <select id="role" name="role" required>
-            <option value="">Select a role</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-            <option value="scrum master">Scrum Master</option>
-            <option value="team member">Team Member</option>
-            <option value="product owner">Product Owner</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="dob">Date of Birth</label>
-          <input
-            type="date"
-            id="dob"
-            name="dob"
-            placeholder="dd-mm-yyyy"
-            required
-          />
-        </div>
-        <div class="form-group">
-
-        <label for="file">Choose a profile picture:</label>
-        <input type="file" name="file" id="file" accept="image/*" required>
-        </div>
-        <button type="submit" class="submit-btn">SUBMIT</button>
-        <div class="login-link">
-          Already have an account? <a href="{{ url_for('auth.login') }}">Login</a>
-        </div>
-      </form>
+        .auth-header {
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .auth-header img {
+            max-width: 120px;
+            margin-bottom: 1rem;
+            filter: brightness(0) invert(1);
+        }
+        
+        .auth-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        
+        .signup-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 3rem;
+            width: 100%;
+            max-width: 750px;
+            animation: slideUp 0.6s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .signup-header h2 {
+            color: var(--primary-gradient-start);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .signup-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        .form-group label i {
+            margin-right: 0.5rem;
+            color: var(--primary-gradient-start);
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all var(--transition);
+            font-family: var(--font-family);
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-gradient-start);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+        
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 1rem;
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            background: var(--bg-light);
+            cursor: pointer;
+            transition: all var(--transition);
+            color: var(--text-secondary);
+        }
+        
+        .file-input-wrapper:hover .file-input-label {
+            border-color: var(--primary-gradient-start);
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .file-input-label i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+            color: var(--primary-gradient-start);
+        }
+        
+        .btn-signup {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn-signup:active {
+            transform: translateY(0);
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .login-link a {
+            color: var(--primary-gradient-start);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .login-link a:hover {
+            color: var(--primary-gradient-end);
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            animation: slideDown 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .alert i {
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border-left: 4px solid var(--success-color);
+            color: #155724;
+        }
+        
+        .alert-danger, .alert-error {
+            background-color: #f8d7da;
+            border-left: 4px solid var(--danger-color);
+            color: #721c24;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .signup-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .signup-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .auth-header h1 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 1rem 0.5rem;
+            }
+            
+            .signup-container {
+                padding: 1.5rem 1rem;
+                border-radius: 15px;
+            }
+            
+            .signup-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .form-group input,
+            .form-group select {
+                padding: 0.75rem 0.85rem;
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* Custom Modal Enhancements */
+        .modal-info {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .modal-info p {
+            margin: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .org-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .org-option input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .org-option label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        #newOrgFields {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-header">
+        <img src="{{ url_for('static', filename='images/logo2.png') }}" alt="Logo">
+        <h1><i class="fas fa-bolt"></i> Swift Access, Seamless Progress!</h1>
     </div>
-  </body>
+
+    <!-- Bootstrap Modal for Organization Setup -->
+    <div class="modal fade" id="orgModal" tabindex="-1" role="dialog" aria-labelledby="orgModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end)); color: white;">
+                    <h5 class="modal-title" id="orgModalTitle">
+                        <i class="fas fa-building"></i> Organization Setup
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-info">
+                        <p><strong><i class="fas fa-info-circle"></i> Admin Registration:</strong> As an admin, you need to create a new organization.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modalOrgName"><i class="fas fa-building"></i> Organization Name *</label>
+                        <input type="text" id="modalOrgName" class="form-control form-input" placeholder="e.g., Acme Corporation" minlength="3" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modalOrgEmail"><i class="fas fa-envelope"></i> Organization Email</label>
+                        <input type="email" id="modalOrgEmail" class="form-control form-input" placeholder="contact@organization.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modalContactPerson"><i class="fas fa-user"></i> Contact Person</label>
+                        <input type="text" id="modalContactPerson" class="form-control form-input" placeholder="John Doe">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modalOrgPhone"><i class="fas fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="modalOrgPhone" class="form-control form-input" placeholder="+1234567890" pattern="^\+?1?\d{9,15}$">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modalDomain"><i class="fas fa-globe"></i> Domain</label>
+                        <input type="text" id="modalDomain" class="form-control form-input" placeholder="organization.com">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="continueWithOrg()" style="background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end)); border: none;">
+                        <i class="fas fa-arrow-right"></i> Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-container">
+        <div class="signup-container">
+            <div class="signup-header">
+                <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+                <p>Join our Agile Project Management Platform</p>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas fa-info-circle"></i> <strong>{{ message }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('auth.add_user') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="username"><i class="fas fa-user"></i> Username</label>
+                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="password" name="password" placeholder="Create strong password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name"><i class="fas fa-id-card"></i> Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="phone" name="phone_number" placeholder="+1 234 567 8900" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role"><i class="fas fa-briefcase"></i> Role</label>
+                        <select id="role" name="role" required>
+                            <option value="">Select your role</option>
+                            <option value="admin">Admin</option>
+                            <option value="product owner">Product Owner</option>
+                            <option value="scrum master">Scrum Master</option>
+                            <option value="developer">Developer</option>
+                            <option value="tester">Tester</option>
+                        </select>
+                        <small style="color: #718096; display: block; margin-top: 5px;">
+                            <i class="fas fa-info-circle"></i> Select your Agile team role
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="organization"><i class="fas fa-building"></i> Organization</label>
+                        <select id="organization" name="organization" disabled>
+                            <option value="">Select role first</option>
+                            {% for org in organizations %}
+                                <option value="{{ org.OrgID }}">{{ org.OrgName }}</option>
+                            {% endfor %}
+                        </select>
+                        <small style="color: #718096; display: block; margin-top: 5px;">
+                            <i class="fas fa-info-circle"></i> Select your role first. Admin creates new organization, other roles select existing.
+                        </small>
+                    </div>
+                    
+                    <!-- Hidden fields for new organization (populated by modal) -->
+                    <input type="hidden" id="create_new_org" name="create_new_org" value="false">
+                    <input type="hidden" id="new_org_name" name="new_org_name" value="">
+                    <input type="hidden" id="new_org_email" name="new_org_email" value="">
+                    <input type="hidden" id="new_org_contact" name="new_org_contact" value="">
+                    <input type="hidden" id="new_org_phone" name="new_org_phone" value="">
+                    <input type="hidden" id="new_org_domain" name="new_org_domain" value="">
+
+                    <div class="form-group">
+                        <label for="dob"><i class="fas fa-calendar"></i> Date of Birth</label>
+                        <input type="date" id="dob" name="dob" required>
+                    </div>
+
+                    <div class="form-group form-group-full">
+                        <label for="file"><i class="fas fa-image"></i> Profile Picture</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" name="file" id="file" accept="image/*" required>
+                            <div class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span id="file-name">Choose a profile picture</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button type="submit" class="btn-signup">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+
+                    <div class="login-link">
+                        Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Role selection - Admin shows modal to create org, others can select existing org
+        document.getElementById('role').addEventListener('change', function(e) {
+            const orgDropdown = document.getElementById('organization');
+            
+            if (e.target.value === 'admin') {
+                // Admin: Show modal to create new organization
+                orgDropdown.disabled = true;
+                orgDropdown.setAttribute('required', 'required');
+                orgDropdown.innerHTML = '<option value="">Creating new organization...</option>';
+                
+                // Clear modal fields
+                document.getElementById('modalOrgName').value = '';
+                document.getElementById('modalOrgEmail').value = '';
+                document.getElementById('modalContactPerson').value = '';
+                document.getElementById('modalOrgPhone').value = '';
+                document.getElementById('modalDomain').value = '';
+                
+                // Show modal for admin to create organization
+                $('#orgModal').modal('show');
+            } else if (e.target.value !== '') {
+                // Other roles: Enable dropdown to select existing organization
+                orgDropdown.disabled = false;
+                orgDropdown.setAttribute('required', 'required');
+                orgDropdown.innerHTML = '<option value="">Select your organization</option>' +
+                    {% for org in organizations %}
+                        '<option value="{{ org.OrgID }}">{{ org.OrgName }}</option>' +
+                    {% endfor %}
+                    '';
+                
+                // Clear hidden fields (not creating new org)
+                document.getElementById('create_new_org').value = 'false';
+                document.getElementById('new_org_name').value = '';
+                document.getElementById('new_org_email').value = '';
+                document.getElementById('new_org_contact').value = '';
+                document.getElementById('new_org_phone').value = '';
+                document.getElementById('new_org_domain').value = '';
+            } else {
+                // No role selected: Disable dropdown
+                orgDropdown.disabled = true;
+                orgDropdown.removeAttribute('required');
+                orgDropdown.value = '';
+                orgDropdown.innerHTML = '<option value="">Select role first</option>';
+                
+                // Clear hidden fields
+                document.getElementById('create_new_org').value = 'false';
+                document.getElementById('new_org_name').value = '';
+                document.getElementById('new_org_email').value = '';
+                document.getElementById('new_org_contact').value = '';
+                document.getElementById('new_org_phone').value = '';
+                document.getElementById('new_org_domain').value = '';
+            }
+        });
+        
+        // Handle modal close event
+        $('#orgModal').on('hidden.bs.modal', function () {
+            // Reset role selection if modal is closed without continuing
+            if (document.getElementById('create_new_org').value !== 'true' && document.getElementById('organization').value === '') {
+                document.getElementById('role').value = '';
+            }
+        });
+        
+        // Continue with organization creation (admin only)
+        function continueWithOrg() {
+            // Admin creates new organization
+            const orgName = document.getElementById('modalOrgName').value.trim();
+            
+            if (!orgName || orgName.length < 3) {
+                alert('Organization name is required and must be at least 3 characters');
+                return;
+            }
+            
+            // Populate hidden fields with new org data
+            document.getElementById('create_new_org').value = 'true';
+            document.getElementById('new_org_name').value = orgName;
+            document.getElementById('new_org_email').value = document.getElementById('modalOrgEmail').value;
+            document.getElementById('new_org_contact').value = document.getElementById('modalContactPerson').value;
+            document.getElementById('new_org_phone').value = document.getElementById('modalOrgPhone').value;
+            document.getElementById('new_org_domain').value = document.getElementById('modalDomain').value;
+            
+            // Set organization field to indicate new org
+            document.getElementById('organization').value = 'new';
+            
+            // Update the organization dropdown to show creating status
+            const orgSelect = document.getElementById('organization');
+            orgSelect.innerHTML = `<option value="new" selected>${orgName} (Creating...)</option>`;
+            
+            // Close Bootstrap modal
+            $('#orgModal').modal('hide');
+        }
+        
+        // File input display
+        document.getElementById('file').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Choose a profile picture';
+            document.getElementById('file-name').textContent = fileName;
+            
+            // Change border color when file selected
+            const label = document.querySelector('.file-input-label');
+            if (e.target.files[0]) {
+                label.style.borderColor = 'var(--success-color)';
+                label.style.color = 'var(--success-color)';
+            }
+        });
+
+        // Auto-dismiss alerts
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 5000);
+
+        // Form validation - organization not required for non-admin
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const role = document.getElementById('role').value;
+            const orgDropdown = document.getElementById('organization');
+            
+            // If not admin, remove required attribute from organization field
+            if (role !== 'admin') {
+                orgDropdown.removeAttribute('required');
+                orgDropdown.value = ''; // Clear value for non-admin
+            } else {
+                // For admin, ensure organization is selected
+                if (!orgDropdown.value && document.getElementById('create_new_org').value !== 'true') {
+                    e.preventDefault();
+                    alert('Please select or create an organization for Admin role');
+                    return false;
+                }
+            }
+        });
+    </script>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

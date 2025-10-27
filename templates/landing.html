@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agile Project Management Dashboard - Home</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <!-- Animate.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --light-bg: #f7fafc;
+        --gradient-bg: linear-gradient(135deg, #667eea, #764ba2);
+        --text-white: #ffffff;
+        --text-dark: #333333;
+        --text-muted: #6c757d;
+        --font-heading: "Poppins", sans-serif;
+        --font-body: "Open Sans", sans-serif;
+        --success-color: #48bb78;
+        --warning-color: #ed8936;
+        --info-color: #4299e1;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f7fafc, #e8f0fe);
+        font-family: var(--font-body);
+        color: var(--text-dark);
+        overflow-x: hidden;
+        position: relative;
+        line-height: 1.6;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      p {
+        font-size: 1.05rem;
+        margin-bottom: 1.2rem;
+        text-align: justify;
+        hyphens: auto;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: var(--gradient-bg);
+        padding: 1.5rem 2rem;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        font-family: var(--font-heading);
+      }
+
+      .navbar-brand {
+        color: var(--text-white) !important;
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+
+      .nav-link {
+        color: var(--text-white) !important;
+        font-weight: 500;
+        margin-left: 1.5rem;
+        position: relative;
+        font-size: 1.05rem;
+      }
+
+      .nav-link:hover {
+        color: #ffd700 !important;
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        background: #ffd700;
+        bottom: -5px;
+        left: 0;
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      /* Floating Bubbles */
+      .bubble {
+        position: absolute;
+        background: rgba(102, 126, 234, 0.1);
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0.7;
+        animation: float 7s ease-in-out infinite;
+      }
+
+      .bubble-0 {
+        width: 150px;
+        height: 150px;
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+      }
+
+      .bubble-1 {
+        width: 120px;
+        height: 120px;
+        top: 20%;
+        right: 5%;
+        animation-delay: 2s;
+      }
+
+      .bubble-2 {
+        width: 100px;
+        height: 100px;
+        bottom: 10%;
+        left: 10%;
+        animation-delay: 4s;
+      }
+
+      .bubble-3 {
+        width: 80px;
+        height: 80px;
+        bottom: 20%;
+        right: 15%;
+        animation-delay: 6s;
+      }
+
+      .bubble-4 {
+        width: 200px;
+        height: 200px;
+        top: 5%;
+        left: 20%;
+        animation-delay: 8s;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0) rotate(0deg);
+        }
+
+        50% {
+          transform: translateY(-30px) rotate(15deg);
+        }
+
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+      }
+
+      /* Hero Section */
+      .hero-section {
+        margin-top: 50px;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 2rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-bg);
+        opacity: 0.1;
+        z-index: -1;
+      }
+
+      .hero-section .card {
+        background: #ffffff;
+        border: none;
+        border-radius: 25px;
+        padding: 3rem;
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+      }
+
+      .hero-section h1 {
+        color: var(--primary-color);
+        font-size: 3.5rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+      }
+
+      .hero-section p {
+        font-size: 1.5rem;
+        color: var(--text-dark);
+        margin: 1.5rem 0;
+        line-height: 1.6;
+      }
+
+      .hero-section .btn-primary {
+        background: var(--gradient-bg);
+        border: none;
+        padding: 1rem 3rem;
+        font-size: 1.2rem;
+        border-radius: 30px;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+
+      .hero-section .btn-outline-primary {
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        padding: 1rem 3rem;
+        font-size: 1.2rem;
+        border-radius: 30px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+
+      .hero-section .btn:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+      }
+
+      /* Features Section */
+      .features-section {
+        padding: 6rem 2rem;
+        background: linear-gradient(135deg, #fff 0%, var(--light-bg) 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .features-section h2 {
+        color: var(--primary-color);
+        font-size: 3rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 320px;
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-bg);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: 1;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+      }
+
+      .feature-card:hover::before {
+        opacity: 0.05;
+      }
+
+      .feature-card i {
+        font-size: 3.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        transition: all 0.4s ease;
+        position: relative;
+        z-index: 2;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .feature-card:hover i {
+        transform: scale(1.2);
+        color: var(--secondary-color);
+      }
+
+      .feature-card h3 {
+        font-size: 1.8rem;
+        color: var(--secondary-color);
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 2;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+      }
+
+      .feature-card p {
+        font-size: 1.1rem;
+        color: var(--text-dark);
+        position: relative;
+        z-index: 2;
+        line-height: 1.6;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        hyphens: none;
+      }
+
+      /* Roles Section */
+      .roles-section {
+        padding: 6rem 2rem;
+        background: linear-gradient(135deg, var(--light-bg) 0%, #fff 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .roles-section h2 {
+        color: var(--primary-color);
+        font-size: 3rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .role-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        border-left: 5px solid var(--primary-color);
+      }
+
+      .role-card:hover {
+        transform: translateX(10px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+      }
+
+      .role-card h3 {
+        color: var(--secondary-color);
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .role-card .role-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .role-features {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .role-features li {
+        padding: 0.5rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+        font-size: 1.05rem;
+      }
+
+      .role-features li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--success-color);
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      /* Workflow Section */
+      .workflow-section {
+        padding: 6rem 2rem;
+        background: linear-gradient(135deg, #fff 0%, var(--light-bg) 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .workflow-section h2 {
+        color: var(--primary-color);
+        font-size: 3rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4rem;
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .step:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+      }
+
+      .step::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-bg);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: 1;
+      }
+
+      .step:hover::before {
+        opacity: 0.05;
+      }
+
+      .step:nth-child(even) {
+        flex-direction: row-reverse;
+      }
+
+      .step-content {
+        flex: 1;
+        padding: 2rem;
+        position: relative;
+        z-index: 2;
+      }
+
+      .step-content h3 {
+        color: var(--secondary-color);
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+        font-weight: 600;
+      }
+
+      .step-content h3::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: width 0.4s ease;
+      }
+
+      .step:hover .step-content h3::after {
+        width: 100%;
+      }
+
+      .step-content p {
+        font-size: 1.2rem;
+        color: var(--text-dark);
+        line-height: 1.6;
+        text-align: left;
+      }
+
+      .step-image {
+        flex: 1;
+        padding: 2rem;
+        position: relative;
+        z-index: 2;
+        text-align: center;
+      }
+
+      .step-image i {
+        font-size: 8rem;
+        color: var(--primary-color);
+        opacity: 0.3;
+      }
+
+      .step-number {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        width: 40px;
+        height: 40px;
+        background: var(--gradient-bg);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        z-index: 3;
+      }
+
+      /* Charts Section */
+      .charts-section {
+        padding: 6rem 2rem;
+        background: linear-gradient(135deg, var(--light-bg) 0%, #fff 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .charts-section h2 {
+        color: var(--primary-color);
+        font-size: 3rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .chart-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        border-top: 5px solid var(--primary-color);
+      }
+
+      .chart-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+      }
+
+      .chart-card h3 {
+        color: var(--secondary-color);
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .chart-card .chart-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .chart-info {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .chart-info li {
+        padding: 0.5rem 0;
+        font-size: 1.05rem;
+        color: var(--text-dark);
+      }
+
+      .chart-info strong {
+        color: var(--secondary-color);
+      }
+
+      /* About Section */
+      .about-section {
+        padding: 6rem 2rem;
+        background: linear-gradient(135deg, #fff 0%, var(--light-bg) 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .about-section h2 {
+        color: var(--primary-color);
+        font-size: 3rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .about-container {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        overflow: hidden;
+      }
+
+      .about-content {
+        padding: 3rem;
+      }
+
+      .about-content p {
+        font-size: 1.2rem;
+        color: var(--text-dark);
+        line-height: 1.8;
+        margin-bottom: 2rem;
+      }
+
+      .about-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--light-bg);
+        border-radius: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .stat-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        font-size: 1.1rem;
+        color: var(--text-dark);
+      }
+
+      /* Tech Stack Section */
+      .tech-section {
+        padding: 6rem 2rem;
+        background: linear-gradient(135deg, var(--light-bg) 0%, #fff 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .tech-section h2 {
+        color: var(--primary-color);
+        font-size: 3rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .tech-card {
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+      }
+
+      .tech-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+      }
+
+      .tech-card i {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .tech-card h4 {
+        color: var(--secondary-color);
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      .tech-card p {
+        font-size: 1rem;
+        color: var(--text-muted);
+        margin: 0;
+        text-align: center;
+      }
+
+      /* Footer */
+      footer {
+        background: var(--gradient-bg);
+        color: var(--text-white);
+        padding: 2rem 1rem;
+        text-align: center;
+      }
+
+      footer h4 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+      }
+
+      footer .social-icons {
+        margin: 2rem 0;
+      }
+
+      footer .social-icons a {
+        color: var(--text-white);
+        font-size: 2rem;
+        margin: 0 1rem;
+        transition: color 0.3s ease, transform 0.3s ease;
+      }
+
+      footer .social-icons a:hover {
+        color: #ffd700;
+        transform: scale(1.2);
+      }
+
+      footer .links a {
+        color: #ffd700;
+        text-decoration: none;
+        margin: 0 1rem;
+        font-size: 1.1rem;
+        transition: color 0.3s ease;
+        font-weight: 500;
+      }
+
+      footer .links a:hover {
+        color: #fff;
+        text-decoration: underline;
+      }
+
+      footer p {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        body {
+          font-size: 1rem;
+        }
+
+        .navbar-brand {
+          font-size: 1.3rem;
+        }
+
+        .nav-link {
+          margin-left: 1rem;
+          font-size: 0.95rem;
+        }
+
+        .hero-section h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero-section p {
+          font-size: 1.2rem;
+        }
+
+        .features-section h2,
+        .roles-section h2,
+        .workflow-section h2,
+        .charts-section h2,
+        .about-section h2,
+        .tech-section h2 {
+          font-size: 2rem;
+        }
+
+        .feature-card {
+          margin-bottom: 2rem;
+        }
+
+        .step {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .step:nth-child(even) {
+          flex-direction: column;
+        }
+
+        .step-image i {
+          font-size: 5rem;
+        }
+
+        .about-stats {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        footer .social-icons a {
+          font-size: 1.5rem;
+        }
+      }
+
+      /* Typing Animation */
+      .typing-animation {
+        overflow: visible;
+        white-space: normal;
+        margin: 0 auto;
+        width: 100%;
+        word-wrap: break-word;
+        word-break: keep-all;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        font-weight: 700;
+      }
+
+      .letter-animation {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeInUp 0.3s forwards;
+        white-space: normal;
+        letter-spacing: -0.05em;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Floating Bubbles -->
+    <div class="bubble bubble-0"></div>
+    <div class="bubble bubble-1"></div>
+    <div class="bubble bubble-2"></div>
+    <div class="bubble bubble-3"></div>
+    <div class="bubble bubble-4"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a
+          class="navbar-brand animate__animated animate__fadeInLeft"
+          href="#home"
+          >📊 Agile Project Dashboard</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a
+                class="nav-link animate__animated animate__fadeInRight"
+                href="#home"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link animate__animated animate__fadeInRight"
+                href="#features"
+                >Features</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link animate__animated animate__fadeInRight"
+                href="#roles"
+                >User Roles</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link animate__animated animate__fadeInRight"
+                href="#workflow"
+                >How It Works</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link animate__animated animate__fadeInRight"
+                href="#charts"
+                >Analytics</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link animate__animated animate__fadeInRight"
+                href="#tech"
+                >Tech Stack</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link animate__animated animate__fadeInRight"
+                href="#about"
+                >About</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link animate__animated animate__fadeInRight"
+                href="/auth/login"
+                >Login</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link animate__animated animate__fadeInRight"
+                href="/auth/signup"
+                >Sign Up</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div
+            class="col-md-5 animate__animated animate__fadeInLeft"
+            style="margin-top: 100px"
+          >
+            <img
+              src="{{ url_for('static', filename='images/logo3.jpg') }}"
+              alt="Agile Team"
+              class="img-fluid rounded-5 shadow-lg"
+              onerror="this.src='https://img.freepik.com/premium-vector/agile-scrum-methodology-software-development-illustration_138260-340.jpg'"
+            />
+          </div>
+          <div
+            class="col-md-6 animate__animated animate__fadeInRight text-center"
+            style="margin-top: 100px; padding-left: 50px"
+          >
+            <div
+              class="d-flex flex-column justify-content-center align-items-center"
+            >
+              <h1
+                class="display-4 mb-4 typing-animation"
+                style="
+                  font-size: 2.8rem;
+                  line-height: 1.3;
+                  letter-spacing: -0.05em;
+                  white-space: normal;
+                  width: 100%;
+                "
+              >
+                <span class="letter-animation">
+                  Agile Project Management Dashboard
+                </span>
+              </h1>
+              <p class="lead mb-1" style="color: #764ba2">
+                <center>
+                  Streamline Your Software Development with Modern Agile
+                  Practices — Sprint Planning, Real-Time Collaboration &
+                  Advanced Analytics
+                </center>
+              </p>
+              <div class="d-grid gap-3 d-sm-flex justify-content-center">
+                <a
+                  href="/auth/login"
+                  class="btn btn-primary btn-lg px-5 rounded-pill animate__animated animate__pulse animate__infinite"
+                  >Get Started</a
+                >
+                <a
+                  href="#features"
+                  class="btn btn-outline-primary btn-lg px-5 rounded-pill animate__animated animate__bounceIn"
+                  >Learn More</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+      <div class="container">
+        <h2 class="animate__animated animate__fadeInDown">
+          🧠 Core Features
+        </h2>
+        <div class="row">
+          <div class="col-md-4">
+            <div
+              class="feature-card animate__animated animate__fadeInUp"
+              style="animation-delay: 0.2s"
+            >
+              <i class="bi bi-person-check-fill"></i>
+              <h3>Multi-Role System</h3>
+              <p>
+                5 distinct user roles with granular permissions: Admin, Product
+                Owner, Scrum Master, Developer, and Tester for complete team
+                collaboration.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div
+              class="feature-card animate__animated animate__fadeInUp"
+              style="animation-delay: 0.4s"
+            >
+              <i class="bi bi-kanban-fill"></i>
+              <h3>Project Management</h3>
+              <p>
+                Complete CRUD operations for projects with sprint planning, user
+                story tracking, and task breakdown for efficient project
+                execution.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div
+              class="feature-card animate__animated animate__fadeInUp"
+              style="animation-delay: 0.6s"
+            >
+              <i class="bi bi-speedometer2"></i>
+              <h3>Sprint Tracking</h3>
+              <p>
+                Visual sprint calendar with velocity tracking, story points, and
+                progress monitoring to ensure team productivity and deadline
+                adherence.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div
+              class="feature-card animate__animated animate__fadeInUp"
+              style="animation-delay: 0.8s"
+            >
+              <i class="bi bi-graph-up-arrow"></i>
+              <h3>Real-Time Analytics</h3>
+              <p>
+                Advanced charts and dashboards with live data synchronization
+                via WebSockets for instant project insights and team performance
+                metrics.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div
+              class="feature-card animate__animated animate__fadeInUp"
+              style="animation-delay: 1s"
+            >
+              <i class="bi bi-file-earmark-pdf-fill"></i>
+              <h3>PDF Reports</h3>
+              <p>
+                Professional reports with embedded charts, executive summaries,
+                and detailed analytics exported in PDF format for stakeholder
+                presentations.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div
+              class="feature-card animate__animated animate__fadeInUp"
+              style="animation-delay: 1.2s"
+            >
+              <i class="bi bi-arrow-repeat"></i>
+              <h3>Status Updates</h3>
+              <p>
+                Role-based status update capabilities with real-time
+                synchronization for transparent project progress tracking across
+                teams.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Roles Section -->
+    <section id="roles" class="roles-section">
+      <div class="container">
+        <h2 class="animate__animated animate__fadeInDown">
+          👥 User Roles & Capabilities
+        </h2>
+        <div class="row">
+          <div class="col-md-6">
+            <div
+              class="role-card animate__animated animate__fadeInLeft"
+              style="animation-delay: 0.2s"
+            >
+              <div class="role-icon">🔐</div>
+              <h3>Admin</h3>
+              <ul class="role-features">
+                <li>Approve/reject user registrations</li>
+                <li>Full system access and monitoring</li>
+                <li>View all projects across organization</li>
+                <li>Monitor login history and user activity</li>
+                <li>Generate system-wide reports</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div
+              class="role-card animate__animated animate__fadeInRight"
+              style="animation-delay: 0.4s"
+            >
+              <div class="role-icon">📋</div>
+              <h3>Product Owner</h3>
+              <ul class="role-features">
+                <li>Create and manage projects</li>
+                <li>Define project scope and timeline</li>
+                <li>Create sprints and user stories</li>
+                <li>Assign team members to projects</li>
+                <li>Prioritize backlog items</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div
+              class="role-card animate__animated animate__fadeInLeft"
+              style="animation-delay: 0.6s"
+            >
+              <div class="role-icon">🏃</div>
+              <h3>Scrum Master</h3>
+              <ul class="role-features">
+                <li>Manage assigned sprints</li>
+                <li>Track sprint velocity</li>
+                <li>Update user story status</li>
+                <li>Facilitate daily standups</li>
+                <li>Monitor team progress</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div
+              class="role-card animate__animated animate__fadeInRight"
+              style="animation-delay: 0.8s"
+            >
+              <div class="role-icon">💻</div>
+              <h3>Developer</h3>
+              <ul class="role-features">
+                <li>View assigned user stories</li>
+                <li>Update story status (own stories)</li>
+                <li>Break stories into tasks</li>
+                <li>Track progress on assignments</li>
+                <li>Collaborate with team members</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div
+              class="role-card animate__animated animate__fadeInUp"
+              style="animation-delay: 1s"
+            >
+              <div class="role-icon">🧪</div>
+              <h3>Tester</h3>
+              <ul class="role-features">
+                <li>View stories assigned for testing</li>
+                <li>Update testing status</li>
+                <li>Verify acceptance criteria</li>
+                <li>Report bugs and issues</li>
+                <li>Track test coverage and completion rates</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workflow Section -->
+    <section id="workflow" class="workflow-section">
+      <div class="container">
+        <h2 class="animate__animated animate__fadeInDown">
+          🔄 Complete Workflow
+        </h2>
+        <div
+          class="step animate__animated animate__fadeInLeft"
+          style="animation-delay: 0.2s"
+        >
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>User Registration & Authentication</h3>
+            <p>
+              Create an account with role selection (Admin, Product Owner, Scrum
+              Master, Developer, Tester). Upload profile picture and join your
+              organization. Admin approval required for non-admin roles with
+              secure BCrypt password hashing.
+            </p>
+          </div>
+          <div class="step-image">
+            <i class="bi bi-person-plus-fill"></i>
+          </div>
+        </div>
+        <div
+          class="step animate__animated animate__fadeInRight"
+          style="animation-delay: 0.4s"
+        >
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Project Creation & Setup</h3>
+            <p>
+              Product Owners create projects with basic information (name,
+              description, dates). Select team members from available users.
+              Configure multiple sprints with start/end dates, goals, and
+              assigned Scrum Masters.
+            </p>
+          </div>
+          <div class="step-image">
+            <i class="bi bi-folder-plus"></i>
+          </div>
+        </div>
+        <div
+          class="step animate__animated animate__fadeInLeft"
+          style="animation-delay: 0.6s"
+        >
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Sprint Planning & Stories</h3>
+            <p>
+              Add user stories to sprints with descriptions, acceptance
+              criteria, priorities, and story points. Assign stories to
+              developers or testers. Break down stories into manageable tasks
+              for better tracking.
+            </p>
+          </div>
+          <div class="step-image">
+            <i class="bi bi-calendar-check"></i>
+          </div>
+        </div>
+        <div
+          class="step animate__animated animate__fadeInRight"
+          style="animation-delay: 0.8s"
+        >
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Work Execution & Updates</h3>
+            <p>
+              Team members view their assigned stories and update status in
+              real-time: Not Started → In Progress → Testing → Completed.
+              Changes broadcast instantly via WebSockets to all connected users
+              for seamless collaboration.
+            </p>
+          </div>
+          <div class="step-image">
+            <i class="bi bi-gear-fill"></i>
+          </div>
+        </div>
+        <div
+          class="step animate__animated animate__fadeInLeft"
+          style="animation-delay: 1s"
+        >
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h3>Monitoring & Analytics</h3>
+            <p>
+              Access real-time dashboards with project statistics, sprint
+              velocity charts, story progress bars, and task completion donut
+              charts. Track team performance, identify bottlenecks, and make
+              data-driven decisions.
+            </p>
+          </div>
+          <div class="step-image">
+            <i class="bi bi-graph-up"></i>
+          </div>
+        </div>
+        <div
+          class="step animate__animated animate__fadeInRight"
+          style="animation-delay: 1.2s"
+        >
+          <div class="step-number">6</div>
+          <div class="step-content">
+            <h3>Reports & Documentation</h3>
+            <p>
+              Generate professional PDF reports with executive summaries,
+              detailed project statistics, embedded charts, and actionable
+              recommendations. Download in seconds with beautiful purple
+              gradient theme for stakeholder presentations.
+            </p>
+          </div>
+          <div class="step-image">
+            <i class="bi bi-file-earmark-arrow-down"></i>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section id="charts" class="charts-section">
+      <div class="container">
+        <h2 class="animate__animated animate__fadeInDown">
+          📊 Analytics & Charts
+        </h2>
+        <div class="row">
+          <div class="col-md-6">
+            <div
+              class="chart-card animate__animated animate__fadeInLeft"
+              style="animation-delay: 0.2s"
+            >
+              <div class="chart-icon">🥧</div>
+              <h3>Project Status Distribution</h3>
+              <ul class="chart-info">
+                <li>
+                  <strong>Purpose:</strong> Show overall project health across
+                  portfolio
+                </li>
+                <li>
+                  <strong>Green:</strong> Completed projects (finished
+                  deliverables)
+                </li>
+                <li>
+                  <strong>Blue:</strong> Active projects (in development)
+                </li>
+                <li>
+                  <strong>Orange:</strong> Pending projects (not yet started)
+                </li>
+                <li>
+                  <strong>Use Case:</strong> Quick snapshot for portfolio
+                  management
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div
+              class="chart-card animate__animated animate__fadeInRight"
+              style="animation-delay: 0.4s"
+            >
+              <div class="chart-icon">📊</div>
+              <h3>User Stories Progress</h3>
+              <ul class="chart-info">
+                <li>
+                  <strong>Purpose:</strong> Track story completion across all
+                  projects
+                </li>
+                <li>
+                  <strong>Green Bar:</strong> Completed stories (done & tested)
+                </li>
+                <li>
+                  <strong>Orange Bar:</strong> In Progress (active development)
+                </li>
+                <li>
+                  <strong>Blue Bar:</strong> Pending stories (backlog items)
+                </li>
+                <li>
+                  <strong>Use Case:</strong> Sprint planning and capacity
+                  analysis
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div
+              class="chart-card animate__animated animate__fadeInLeft"
+              style="animation-delay: 0.6s"
+            >
+              <div class="chart-icon">🍩</div>
+              <h3>Task Status Overview</h3>
+              <ul class="chart-info">
+                <li>
+                  <strong>Purpose:</strong> Detailed task-level breakdown for
+                  teams
+                </li>
+                <li>
+                  <strong>Green:</strong> Completed tasks (verified & closed)
+                </li>
+                <li>
+                  <strong>Orange:</strong> In Progress (currently working)
+                </li>
+                <li>
+                  <strong>Blue:</strong> Pending tasks (queued for execution)
+                </li>
+                <li>
+                  <strong>Use Case:</strong> Daily standup discussions and
+                  sprint reviews
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div
+              class="chart-card animate__animated animate__fadeInRight"
+              style="animation-delay: 0.8s"
+            >
+              <div class="chart-icon">📈</div>
+              <h3>Sprint Velocity Trend</h3>
+              <ul class="chart-info">
+                <li>
+                  <strong>Purpose:</strong> Track team performance over multiple
+                  sprints
+                </li>
+                <li><strong>X-axis:</strong> Sprint number (sequential)</li>
+                <li>
+                  <strong>Y-axis:</strong> Velocity (completed story points)
+                </li>
+                <li>
+                  <strong>Trend Line:</strong> Shows improvement or degradation
+                </li>
+                <li>
+                  <strong>Use Case:</strong> Sprint retrospectives and future
+                  forecasting
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section id="tech" class="tech-section">
+      <div class="container">
+        <h2 class="animate__animated animate__fadeInDown">🛠️ Tech Stack</h2>
+        <div class="row">
+          <div class="col-md-3">
+            <div
+              class="tech-card animate__animated animate__fadeInUp"
+              style="animation-delay: 0.2s"
+            >
+              <i class="bi bi-server"></i>
+              <h4>Backend</h4>
+              <p>Flask 3.1.0<br />SQLAlchemy 2.0.36<br />Flask-Login</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="tech-card animate__animated animate__fadeInUp"
+              style="animation-delay: 0.4s"
+            >
+              <i class="bi bi-database"></i>
+              <h4>Database</h4>
+              <p>SQLite (Dev)<br />PostgreSQL-ready<br />Multi-tenant</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="tech-card animate__animated animate__fadeInUp"
+              style="animation-delay: 0.6s"
+            >
+              <i class="bi bi-brush"></i>
+              <h4>Frontend</h4>
+              <p>Bootstrap 5.3.2<br />JavaScript<br />Jinja2 Templates</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="tech-card animate__animated animate__fadeInUp"
+              style="animation-delay: 0.8s"
+            >
+              <i class="bi bi-lightning-charge"></i>
+              <h4>Real-Time</h4>
+              <p>Flask-SocketIO<br />WebSockets<br />Live Updates</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="tech-card animate__animated animate__fadeInUp"
+              style="animation-delay: 1s"
+            >
+              <i class="bi bi-bar-chart-fill"></i>
+              <h4>Charts</h4>
+              <p>Matplotlib 3.9.3<br />Plotly 6.3.1<br />Pandas 2.3.3</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="tech-card animate__animated animate__fadeInUp"
+              style="animation-delay: 1.2s"
+            >
+              <i class="bi bi-file-pdf"></i>
+              <h4>Reports</h4>
+              <p>FPDF 1.7.2<br />Chart Embedding<br />PDF Export</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="tech-card animate__animated animate__fadeInUp"
+              style="animation-delay: 1.4s"
+            >
+              <i class="bi bi-lock-fill"></i>
+              <h4>Security</h4>
+              <p>BCrypt 5.0.0<br />Session Auth<br />RBAC</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div
+              class="tech-card animate__animated animate__fadeInUp"
+              style="animation-delay: 1.6s"
+            >
+              <i class="bi bi-envelope"></i>
+              <h4>Email</h4>
+              <p>Flask-Mail 0.9.1<br />SMTP Support<br />Notifications</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+      <div class="container">
+        <h2 class="animate__animated animate__fadeInDown">
+          🎯 About The Project
+        </h2>
+        <div
+          class="about-container animate__animated animate__fadeInUp"
+          style="animation-delay: 0.2s"
+        >
+          <div class="about-content">
+            <p>
+              The <strong>Agile Project Management Dashboard</strong> is a
+              comprehensive full-stack web application designed to facilitate
+              Agile software development methodologies. Built with modern
+              technologies, it enables teams to efficiently manage projects,
+              sprints, user stories, and tasks while providing real-time
+              collaboration features and detailed analytics.
+            </p>
+            <p>
+              Our platform supports <strong>5 distinct user roles</strong> with
+              granular permissions, ensuring that every team member has the
+              right access to perform their responsibilities. From Admin
+              oversight to Developer execution, each role is carefully designed
+              to streamline workflows and enhance productivity.
+            </p>
+            <p>
+              With features like <strong>real-time status updates</strong> via
+              WebSockets, <strong>professional PDF reports</strong> with
+              embedded charts, and <strong>advanced analytics</strong> for
+              sprint velocity tracking, the dashboard provides everything teams
+              need to succeed in Agile development. The beautiful purple
+              gradient theme ensures a modern, professional appearance suitable
+              for any organization.
+            </p>
+            <div class="about-stats">
+              <div class="stat-item">
+                <div class="stat-number">5</div>
+                <div class="stat-label">User Roles</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">10+</div>
+                <div class="stat-label">Core Features</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Chart Types</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <h4 class="animate__animated animate__fadeInDown">
+          Agile Project Management Dashboard
+        </h4>
+        <div
+          class="social-icons animate__animated animate__fadeInUp"
+          style="animation-delay: 0.2s"
+        >
+          <a href="https://github.com/VanshGosavi07" target="_blank"
+            ><i class="bi bi-github"></i
+          ></a>
+          <a href="https://twitter.com" target="_blank"
+            ><i class="bi bi-twitter"></i
+          ></a>
+          <a href="https://linkedin.com" target="_blank"
+            ><i class="bi bi-linkedin"></i
+          ></a>
+          <a
+            href="mailto:vanshgosavi7@gmail.com"
+            target="_blank"
+            ><i class="bi bi-envelope"></i
+          ></a>
+        </div>
+        <div
+          class="links animate__animated animate__fadeInUp"
+          style="animation-delay: 0.4s"
+        >
+          <a href="#home">Home</a>
+          <a href="#features">Features</a>
+          <a href="#roles">User Roles</a>
+          <a href="#workflow">How It Works</a>
+          <a href="#charts">Analytics</a>
+          <a href="/auth/login">Login</a>
+        </div>
+        <p
+          class="animate__animated animate__fadeInUp"
+          style="animation-delay: 0.6s"
+        >
+          © 2025 Agile Project Management Dashboard. All rights reserved.<br />
+          Developed by Vansh Gosavi | 📞 +91 9359775740
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Smooth Scroll for Navbar Links
+      document.querySelectorAll(".nav-link").forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          if (this.getAttribute("href").startsWith("#")) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute("href"));
+            if (target) {
+              target.scrollIntoView({ behavior: "smooth" });
+            }
+          }
+        });
+      });
+
+      // Add active class to current section in navbar
+      window.addEventListener("scroll", function () {
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        let current = "";
+
+        sections.forEach((section) => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+
+          if (pageYOffset >= sectionTop - 300) {
+            current = section.getAttribute("id");
+          }
+        });
+
+        navLinks.forEach((link) => {
+          link.classList.remove("active");
+          if (link.getAttribute("href") === `#${current}`) {
+            link.classList.add("active");
+          }
+        });
+      });
+
+      // Typing animation for hero title
+      document.addEventListener("DOMContentLoaded", function () {
+        const heroTitle = document.querySelector(".letter-animation");
+        if (heroTitle) {
+          const text = heroTitle.textContent;
+          heroTitle.textContent = "";
+          heroTitle.style.opacity = "1";
+
+          let index = 0;
+          const typingSpeed = 50;
+
+          function typeWriter() {
+            if (index < text.length) {
+              heroTitle.textContent += text.charAt(index);
+              index++;
+              setTimeout(typeWriter, typingSpeed);
+            }
+          }
+
+          setTimeout(typeWriter, 500);
+        }
+      });
+    </script>
+  </body>
+</html>

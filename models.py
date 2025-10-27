@@ -1,25 +1,66 @@
-from database import db 
+from database import db
 from flask_login import UserMixin
 from datetime import datetime
 from enum import Enum
-# ProductOwner Table
+
+# ==================== Organization Model ====================
+# Represents a company/organization in the multi-tenant system
+# NOTE: Subscription limits REMOVED - all organizations have UNLIMITED users and projects
+
+class Organization(db.Model):
+    """
+    Organization model for multi-tenant support.
+    Each organization has complete data isolation.
+    
+    IMPORTANT: MaxUsers and MaxProjects fields have been REMOVED
+    All organizations now have unlimited access to users and projects.
+    """
+    __tablename__ = 'Organization'
+    
+    # Primary key
+    OrgID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    
+    # Organization details
+    OrgName = db.Column(db.String(255), nullable=False, unique=True)
+    OrgEmail = db.Column(db.String(255), nullable=True)
+    ContactPerson = db.Column(db.String(255), nullable=True)
+    PhoneNumber = db.Column(db.String(15), nullable=True)
+    Domain = db.Column(db.String(255), unique=True, nullable=True)  # e.g., company.com
+    Approved = db.Column(db.Boolean, default=False)  # Organization needs approval
+    IsActive = db.Column(db.Boolean, default=True)
+    CreatedDate = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships - one organization has many users, projects, etc.
+    users = db.relationship('Users', backref='organization', lazy=True)
+    projects = db.relationship('ProjectDetails', backref='organization', lazy=True)
+    product_owners = db.relationship('ProductOwner', backref='organization', lazy=True)
+    scrum_masters = db.relationship('ScrumMasters', backref='organization', lazy=True)
+
+    def __repr__(self):
+        return f"<Organization {self.OrgName}>"
+
 class ProductOwner(db.Model):
     __tablename__ = 'ProductOwner'
     ProductOwnerId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    OrgID = db.Column(db.Integer, db.ForeignKey('Organization.OrgID'), nullable=False, index=True)
     Name = db.Column(db.String(255), nullable=False)
-    Email = db.Column(db.String(255), unique=True, nullable=False)
+    Email = db.Column(db.String(255), nullable=False, index=True)
     RoleName = db.Column(db.String(255), nullable=False)
 
-    # Relationships
     projects = db.relationship('ProjectDetails', backref='product_owner', lazy=True)
+
+    __table_args__ = (
+        db.UniqueConstraint('Email', 'OrgID', name='unique_po_email_per_org'),
+        db.Index('idx_po_org_email', 'OrgID', 'Email'),
+    )
 
     def __repr__(self):
         return f"<ProductOwner {self.Name}>"
 
-# ProjectDetails Table
 class ProjectDetails(db.Model):
     __tablename__ = 'ProjectDetails'
     ProjectId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    OrgID = db.Column(db.Integer, db.ForeignKey('Organization.OrgID'), nullable=False, index=True)
     ProductOwnerId = db.Column(db.Integer, db.ForeignKey('ProductOwner.ProductOwnerId'), nullable=False)
     ProjectName = db.Column(db.String(255), nullable=False)
     ProjectDescription = db.Column(db.Text)
@@ -27,15 +68,20 @@ class ProjectDetails(db.Model):
     EndDate = db.Column(db.Date, nullable=False)
     RevisedEndDate = db.Column(db.Date)
     Status = db.Column(db.String(100), default="Not Started")
+    CreatedDate = db.Column(db.DateTime, default=datetime.utcnow)
+    UpdatedDate = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationships
-    sprints = db.relationship('SprintCalendar', backref='project', lazy=True)
-    user_stories = db.relationship('UserStories', backref='project', lazy=True)
+    sprints = db.relationship('SprintCalendar', backref='project', lazy=True, cascade='all, delete-orphan')
+    user_stories = db.relationship('UserStories', backref='project', lazy=True, cascade='all, delete-orphan')
+
+    __table_args__ = (
+        db.Index('idx_project_org_status', 'OrgID', 'Status'),
+        db.Index('idx_project_org_dates', 'OrgID', 'StartDate', 'EndDate'),
+    )
 
     def __repr__(self):
         return f"<ProjectDetails {self.ProjectName}>"
 
-# SprintCalendar Table
 class SprintCalendar(db.Model):
     __tablename__ = 'SprintCalendar'
     SprintId = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -46,31 +92,35 @@ class SprintCalendar(db.Model):
     EndDate = db.Column(db.Date, nullable=False)
     Velocity = db.Column(db.Integer, default=0)
 
-    # Relationships
     scrum_master = db.relationship('ScrumMasters', backref='sprints')
     user_stories = db.relationship('UserStories', backref='sprint', lazy=True)
 
     def __repr__(self):
         return f"<SprintCalendar Sprint {self.SprintNo}>"
 
-# ScrumMasters Table
 class ScrumMasters(db.Model):
     __tablename__ = 'ScrumMasters'
     ScrumMasterID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Email = db.Column(db.String(255), nullable=False, unique=True)
+    OrgID = db.Column(db.Integer, db.ForeignKey('Organization.OrgID'), nullable=False, index=True)
+    Email = db.Column(db.String(255), nullable=False, index=True)
     Name = db.Column(db.String(255), nullable=False)
     ContactNumber = db.Column(db.String(15))
+
+    __table_args__ = (
+        db.UniqueConstraint('Email', 'OrgID', name='unique_sm_email_per_org'),
+        db.Index('idx_sm_org', 'OrgID'),
+    )
 
     def __repr__(self):
         return f"<ScrumMasters {self.Name}>"
 
-# Users Table
 class Users(db.Model, UserMixin):
     __tablename__ = 'Users'
     UserID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    UserName = db.Column(db.String(255), unique=True, nullable=False)
+    OrgID = db.Column(db.Integer, db.ForeignKey('Organization.OrgID'), nullable=False, index=True)
+    UserName = db.Column(db.String(255), nullable=False, index=True)
     Password = db.Column(db.String(255), nullable=False)
-    Email = db.Column(db.String(255), unique=True, nullable=False)
+    Email = db.Column(db.String(255), nullable=False, index=True)
     Role = db.Column(db.String(100), nullable=False)
     PhoneNumber = db.Column(db.String(15))
     Name = db.Column(db.String(255), nullable=False)
@@ -78,21 +128,28 @@ class Users(db.Model, UserMixin):
     DOB = db.Column(db.DateTime,nullable=True)
     login_time = db.Column(db.DateTime, nullable=True)
     logout_time = db.Column(db.DateTime, nullable=True)
-    profile_picture = db.Column(db.String(100))  # Store the file path of the profile picture
+    profile_picture = db.Column(db.String(100))
+    IsActive = db.Column(db.Boolean, default=True)
+    CreatedDate = db.Column(db.DateTime, default=datetime.utcnow)
+
     def get_id(self):
         return str(self.UserID)
 
-    # Relationships
     tasks = db.relationship('Tasks', backref='assigned_user', lazy=True)
     roles = db.relationship('UserRoles', backref='user', lazy=True)
 
+    __table_args__ = (
+        db.UniqueConstraint('UserName', 'OrgID', name='unique_username_per_org'),
+        db.UniqueConstraint('Email', 'OrgID', name='unique_email_per_org'),
+        db.Index('idx_user_org_email', 'OrgID', 'Email'),
+        db.Index('idx_user_org_role', 'OrgID', 'Role'),
+    )
+
     def __repr__(self):
         return f"<Users {self.UserName}>"
-        # Override the get_id method
 
 
 
-# Tasks Table
 class Tasks(db.Model):
     __tablename__ = 'Tasks'
     TaskId = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -101,13 +158,11 @@ class Tasks(db.Model):
     AssignedUserID = db.Column(db.Integer, db.ForeignKey('Users.UserID'), nullable=False)
     TaskStatus = db.Column(db.String(100), default="Not Started")
 
-    # Relationships
     user_story = db.relationship('UserStories', backref='tasks')
 
     def __repr__(self):
         return f"<Tasks {self.TaskName}>"
 
-# UserRoles Table
 class UserRoles(db.Model):
     __tablename__ = 'UserRoles'
     RoleID = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -117,7 +172,6 @@ class UserRoles(db.Model):
     def __repr__(self):
         return f"<UserRoles {self.RoleName}>"
 
-# UserStories Table
 class UserStories(db.Model):
     __tablename__ = 'UserStories'
     UserStoryID = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -140,13 +194,12 @@ class ProjectUsers(db.Model):
     UserID = db.Column(db.Integer, db.ForeignKey('Users.UserID'), primary_key=True, nullable=False)
     ProjectId = db.Column(db.Integer, db.ForeignKey('ProjectDetails.ProjectId'), primary_key=True, nullable=False)
 
-    # Relationships (optional, for convenience in accessing related objects)
     user = db.relationship('Users', backref='project_associations')
     project = db.relationship('ProjectDetails', backref='user_associations')
 
     def __repr__(self):
         return f"<ProjectUsers(user_id={self.user_id}, project_id={self.project_id})>"
-    
+
 class FrequencyEnum(Enum):
     DAILY = "daily"
     WEEKLY = "weekly"
@@ -164,3 +217,50 @@ class Reports(db.Model):
         'ProjectDetails.ProjectId'), nullable=False)
 
     project = db.relationship('ProjectDetails', backref='reports')
+
+
+class AuditLog(db.Model):
+    __tablename__ = 'AuditLog'
+    LogID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    OrgID = db.Column(db.Integer, db.ForeignKey('Organization.OrgID'), nullable=False, index=True)
+    UserID = db.Column(db.Integer, db.ForeignKey('Users.UserID'), nullable=True)
+    Action = db.Column(db.String(100), nullable=False)
+    ResourceType = db.Column(db.String(100), nullable=False)
+    ResourceID = db.Column(db.Integer, nullable=True)
+    Details = db.Column(db.Text, nullable=True)
+    IPAddress = db.Column(db.String(45), nullable=True)
+    UserAgent = db.Column(db.String(255), nullable=True)
+    Timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    user = db.relationship('Users', backref='audit_logs')
+
+    __table_args__ = (
+        db.Index('idx_audit_org_time', 'OrgID', 'Timestamp'),
+        db.Index('idx_audit_org_action', 'OrgID', 'Action'),
+    )
+
+    def __repr__(self):
+        return f"<AuditLog {self.Action} by User {self.UserID}>"
+
+
+class Notification(db.Model):
+    __tablename__ = 'Notification'
+    NotificationID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    OrgID = db.Column(db.Integer, db.ForeignKey('Organization.OrgID'), nullable=False, index=True)
+    UserID = db.Column(db.Integer, db.ForeignKey('Users.UserID'), nullable=False)
+    Title = db.Column(db.String(255), nullable=False)
+    Message = db.Column(db.Text, nullable=False)
+    Type = db.Column(db.String(50), default="info")
+    IsRead = db.Column(db.Boolean, default=False)
+    CreatedDate = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    ReadDate = db.Column(db.DateTime, nullable=True)
+
+    user = db.relationship('Users', backref='notifications')
+
+    __table_args__ = (
+        db.Index('idx_notif_user_read', 'UserID', 'IsRead'),
+        db.Index('idx_notif_org_created', 'OrgID', 'CreatedDate'),
+    )
+
+    def __repr__(self):
+        return f"<Notification {self.Title}>"

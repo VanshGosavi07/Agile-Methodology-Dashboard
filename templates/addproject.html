@@ -3,106 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADD PROJECT</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/addproject.css') }}">
+    <title>Add Project - Agile Project Management</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/unified-theme.css') }}" />
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 
 <body>
-     <!-- Header -->
-     <div class="header">
-          <img
-          src="{{ url_for('static',filename='images/logo3.jpg') }}"
-          alt="Logo"
-          class="profile-pic"
-      />
-        <h1>AGILE PROJECT MANAGEMENT DASHBOARD</h1>
-        
-      </div>
-
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <div class="greeting">
-          <span>Hello, {{ user_name }}!</span>
-
-          <div class="dropdown">
-            <a href="{{url_for('auth.login')}}"
-              ><img
-                src="{{ url_for('static', filename=current_user.profile_picture) }}"
-                alt="Profile"
-                class="profile-pic"
-            /></a>
-            <div class="dropdown-content">
-              <a href="{{url_for('auth.logout')}}" class="logout">Logout</a>
+     <!-- Header with Bootstrap -->
+     <nav class="navbar navbar-expand-lg shadow-sm sticky-top" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="container-fluid px-4">
+          <a class="navbar-brand d-flex align-items-center text-white" href="#">
+            <img src="{{ url_for('static',filename='images/logo3.jpg') }}" alt="Logo" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+            <span class="fw-bold fs-5">AGILE PROJECT MANAGEMENT</span>
+          </a>
+          
+          <!-- User Section -->
+          <div class="d-flex align-items-center gap-3">
+            <div class="text-white d-none d-md-flex align-items-center gap-2">
+              <i class="fas fa-user-circle fs-4"></i>
+              <span class="fw-semibold">Hello, {{ user_name }}!</span>
+            </div>
+            
+            <!-- Dropdown Menu -->
+            <div class="dropdown">
+              <button class="btn btn-link p-0 border-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile" class="rounded-circle border border-3 border-white" style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown" style="min-width: 200px;">
+                <li class="px-3 py-2 border-bottom">
+                  <small class="text-muted">Signed in as</small>
+                  <div class="fw-bold text-dark">{{ user_name }}</div>
+                </li>
+                <li><a class="dropdown-item py-2" href="#"><i class="fas fa-user-circle me-2"></i> My Profile</a></li>
+                <li><a class="dropdown-item py-2" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item py-2 text-danger fw-semibold" href="{{url_for('auth.logout')}}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+              </ul>
             </div>
           </div>
         </div>
-      </div>
+      </nav>
+    <!-- Main Container with Bootstrap -->
+    <div class="container my-5">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4 p-md-5">
+          <!-- Header -->
+          <div class="text-center mb-4 pb-3 border-bottom">
+            <h1 class="display-6 fw-bold mb-0" style="color: #667eea;">
+              <i class="fas fa-plus-circle me-2"></i> ADD PROJECT DETAILS
+            </h1>
+          </div>
 
-
-    
-
-    <!-- Hidden Form -->
-    <div id="form-container" style="display: block;">
-      <h1 id="add">ADD PROJECT DETAILS</h1>
-        <form id="project-form" action="/submit" method="post">
-          <button class="back-button"><a href="/projects/{{user_role}}/{{user_id}}">Back</a></button>
-            <div>
-                <label for="product-owner-id">Product Owner</label>
-                <select id="product-owner-id" name="product_owner_id" required>
-                    <option value="">Select Product Owner</option>
-                </select>
-
-                <label for="select-user">Team Members</label>
-                <div class="custom-dropdown">
-                    <div class="dropdown-header" onclick="toggleDropdown()">
-                        Select Team Members
-                        <span>▼</span>
-                    </div>
-                    <div id="userDropdownList" class="dropdown-list">
-                        <!-- Users will be dynamically populated here -->
-                    </div>
-                    <input type="hidden" id="selected-user-ids" name="selected_user_ids" value="">
-                </div><br>
-
-                <label for="project-name">Project Name</label>
-                <input type="text" id="project-name" name="project_name" required>
-
-                <label for="project-desc">Project Description</label>
-                <textarea id="project-desc" name="project_description"></textarea>
-
-                <label for="start-date">Start Date</label>
-                <input type="date" id="start-date" name="start_date" required>
-
-                <label for="end-date">End Date</label>
-                <input type="date" id="end-date" name="end_date" required>
-
-                <label for="revised-end-date">Revised End Date</label>
-                <input type="date" id="revised-end-date" name="revised_end_date">
-
-                <label for="status">Status</label>
-                <select id="status" name="status" required>
-                    <option value="Active">Active</option>
-                    <option value="Completed">Completed</option>
-                    <option value="On Hold">On-Hold</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
+          <form id="project-form" action="/submit" method="post">
+            <!-- Back Button -->
+            <div class="mb-4">
+              <a href="/projects/{{user_role}}/{{user_id}}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i> Back to Projects
+              </a>
             </div>
 
-            <div>
-                <h2>Sprint Details</h2>
-                <label for="num-sprints">Number of Sprints</label>
-                <input type="number" id="num-sprints" min="1" required>
-                <button type="button" onclick="addSprintFields()">Add Sprints</button>
+            <!-- Basic Information Card -->
+            <div class="card mb-4 border-0 shadow-sm" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);">
+              <div class="card-header py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                <h2 class="h5 mb-0 text-white fw-bold">
+                  <i class="fas fa-info-circle me-2"></i> Basic Information
+                </h2>
+              </div>
+              <div class="card-body p-4">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="product-owner-id" class="form-label fw-semibold">
+                      <i class="fas fa-user-tie me-2 text-primary"></i> Product Owner
+                    </label>
+                    <select id="product-owner-id" name="product_owner_id" class="form-select form-select-lg" required>
+                        <option value="">Select Product Owner</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="select-user" class="form-label fw-semibold">
+                      <i class="fas fa-users me-2 text-primary"></i> Team Members
+                    </label>
+                    <div class="custom-dropdown">
+                        <div class="dropdown-header" onclick="toggleDropdown(event)">
+                            <span id="dropdown-header-text">Select Team Members</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        <div id="userDropdownList" class="dropdown-list">
+                            <!-- Users will be dynamically populated here -->
+                        </div>
+                        <input type="hidden" id="selected-user-ids" name="selected_user_ids" value="">
+                    </div>
+                  </div>
+
+                  <div class="col-md-12">
+                    <label for="project-name" class="form-label fw-semibold">
+                      <i class="fas fa-folder-open me-2 text-primary"></i> Project Name
+                    </label>
+                    <input type="text" id="project-name" name="project_name" class="form-control form-control-lg" placeholder="Enter project name" required>
+                  </div>
+
+                  <div class="col-md-12">
+                    <label for="project-desc" class="form-label fw-semibold">
+                      <i class="fas fa-align-left me-2 text-primary"></i> Project Description
+                    </label>
+                    <textarea id="project-desc" name="project_description" class="form-control" rows="4" placeholder="Describe your project..."></textarea>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label for="start-date" class="form-label fw-semibold">
+                      <i class="fas fa-calendar-alt me-2 text-success"></i> Start Date
+                    </label>
+                    <input type="date" id="start-date" name="start_date" class="form-control form-control-lg" required>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label for="end-date" class="form-label fw-semibold">
+                      <i class="fas fa-calendar-check me-2 text-success"></i> End Date
+                    </label>
+                    <input type="date" id="end-date" name="end_date" class="form-control form-control-lg" required>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label for="revised-end-date" class="form-label fw-semibold">
+                      <i class="fas fa-calendar-plus me-2 text-warning"></i> Revised End Date
+                    </label>
+                    <input type="date" id="revised-end-date" name="revised_end_date" class="form-control form-control-lg">
+                  </div>
+
+                  <div class="col-md-12">
+                    <label for="status" class="form-label fw-semibold">
+                      <i class="fas fa-tasks me-2 text-info"></i> Status
+                    </label>
+                    <select id="status" name="status" class="form-select form-select-lg" required>
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
+                        <option value="On Hold">On-Hold</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sprint Details Card -->
+            <div class="card mb-4 border-0 shadow-sm" style="background: linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, rgba(56, 161, 105, 0.05) 100%);">
+              <div class="card-header py-3" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); border: none;">
+                <h2 class="h5 mb-0 text-white fw-bold">
+                  <i class="fas fa-running me-2"></i> Sprint Details
+                </h2>
+              </div>
+              <div class="card-body p-4">
+                <div class="row g-3">
+                  <div class="col-md-8">
+                    <label for="num-sprints" class="form-label fw-semibold">
+                      <i class="fas fa-list-ol me-2 text-success"></i> Number of Sprints
+                    </label>
+                    <input type="number" id="num-sprints" min="1" class="form-control form-control-lg" placeholder="Enter number of sprints" required>
+                  </div>
+                  <div class="col-md-4 d-flex align-items-end">
+                    <button type="button" onclick="addSprintFields()" class="btn btn-success btn-lg w-100">
+                      <i class="fas fa-plus me-2"></i> Add Sprints
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div id="sprint-container"></div>
 
-            <button type="button" onclick="submitForm1()">Submit</button>
-        </form>
+            <!-- Submit Button -->
+            <div class="d-grid gap-2 mt-4">
+              <button type="button" onclick="submitForm1()" class="btn btn-lg py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; font-size: 1.2rem; border: none;">
+                <i class="fas fa-paper-plane me-2"></i> Submit Project
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-    <div class="footer">
-        &copy; 2024 Agile Project Management Dashboard. All Rights Reserved.
-    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white py-4 mt-5 border-top">
+      <div class="container text-center">
+        <p class="text-muted mb-0">
+          <i class="fas fa-copyright me-1"></i> 2024 Agile Project Management Dashboard. All Rights Reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+      /* Enhanced Bootstrap Styles */
+      body {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
+          background-attachment: fixed;
+      }
+
+      /* Custom dropdown styles */
+      .custom-dropdown {
+          position: relative;
+          width: 100%;
+      }
+
+      .dropdown-header {
+          width: 100%;
+          padding: 0.875rem 1rem;
+          border: 2px solid #dee2e6;
+          border-radius: 0.5rem;
+          background: white;
+          cursor: pointer;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          transition: all 0.3s;
+          font-size: 1rem;
+          user-select: none;
+      }
+
+      .dropdown-header:hover {
+          border-color: #667eea;
+          box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+      }
+
+      .dropdown-header:active {
+          transform: scale(0.98);
+      }
+
+      .dropdown-arrow {
+          transition: transform 0.3s;
+          font-weight: bold;
+          color: #667eea;
+      }
+
+      .custom-dropdown.active .dropdown-arrow {
+          transform: rotate(180deg);
+      }
+
+      .dropdown-list {
+          display: none;
+          position: absolute;
+          top: calc(100% + 0.25rem);
+          left: 0;
+          right: 0;
+          background: white;
+          border: 2px solid #667eea;
+          border-radius: 0.5rem;
+          max-height: 300px;
+          overflow-y: auto;
+          z-index: 1000;
+          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+          animation: dropdownSlideIn 0.2s ease-out;
+      }
+
+      @keyframes dropdownSlideIn {
+          from {
+              opacity: 0;
+              transform: translateY(-10px);
+          }
+          to {
+              opacity: 1;
+              transform: translateY(0);
+          }
+      }
+
+      .dropdown-list.show {
+          display: block;
+      }
+
+      .dropdown-list::-webkit-scrollbar {
+          width: 8px;
+      }
+
+      .dropdown-list::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 0.5rem;
+      }
+
+      .dropdown-list::-webkit-scrollbar-thumb {
+          background: #667eea;
+          border-radius: 0.5rem;
+      }
+
+      .dropdown-list::-webkit-scrollbar-thumb:hover {
+          background: #5568d3;
+      }
+
+      .dropdown-item-custom {
+          padding: 0.875rem 1rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          border-bottom: 1px solid #e9ecef;
+          transition: all 0.2s;
+      }
+
+      .dropdown-item-custom:last-child {
+          border-bottom: none;
+      }
+
+      .dropdown-item-custom:hover {
+          background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+          padding-left: 1.25rem;
+      }
+
+      .dropdown-item-custom input[type="checkbox"] {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          accent-color: #667eea;
+          border-radius: 0.25rem;
+      }
+
+      .dropdown-item-custom label {
+          margin: 0;
+          cursor: pointer;
+          flex: 1;
+          font-weight: 500;
+          color: #2d3748;
+      }
+
+      /* Sprint container with Bootstrap styling */
+      #sprint-container {
+          margin-top: 1.5rem;
+      }
+
+      #sprint-container > div {
+          background: white;
+          border-radius: 1rem;
+          margin-bottom: 2rem;
+          border: 2px solid #667eea;
+          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+          transition: all 0.3s;
+      }
+
+      #sprint-container > div:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+      }
+
+      #sprint-container h4 {
+          color: white;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          padding: 1.25rem 1.5rem;
+          margin: 0;
+          font-size: 1.3rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+      }
+
+      #sprint-container h4::before {
+          content: '🏃';
+          font-size: 1.5rem;
+      }
+
+      .sprint-content {
+          padding: 2rem;
+      }
+
+      .sprint-fields-grid {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr 1fr 0.8fr 1.5fr;
+          gap: 1rem;
+          align-items: end;
+      }
+
+      .sprint-fields-grid label {
+          font-weight: 600;
+          color: #495057;
+          margin-bottom: 0.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+      }
+
+      .sprint-fields-grid label::before {
+          content: '▸';
+          color: #667eea;
+          font-size: 1.2rem;
+      }
+
+      /* User story sections with Bootstrap */
+      .user-story-section {
+          background: white;
+          padding: 1.75rem;
+          border-radius: 0.75rem;
+          margin-top: 1.5rem;
+          border-left: 5px solid #764ba2;
+          box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.08);
+          transition: all 0.3s;
+      }
+
+      .user-story-section:hover {
+          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+          transform: translateX(5px);
+      }
+
+      .user-story-section h5 {
+          color: #764ba2;
+          margin: 0 0 1.5rem 0;
+          font-size: 1.2rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding-bottom: 0.75rem;
+          border-bottom: 2px solid #e9ecef;
+      }
+
+      .user-story-section h5::before {
+          content: '📋';
+          font-size: 1.3rem;
+      }
+
+      /* Bootstrap form enhancements */
+      .form-control:focus,
+      .form-select:focus {
+          border-color: #667eea;
+          box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+          .sprint-fields-grid {
+              grid-template-columns: 1fr;
+              gap: 1rem;
+          }
+
+          .sprint-content {
+              padding: 1.5rem;
+          }
+
+          #sprint-container h4 {
+              font-size: 1.1rem;
+              padding: 1rem;
+          }
+      }
+
+      @media (min-width: 769px) and (max-width: 1200px) {
+          .sprint-fields-grid {
+              grid-template-columns: repeat(2, 1fr);
+          }
+
+          .sprint-fields-grid > div:last-child {
+              grid-column: 1 / -1;
+          }
+      }
+
+      /* Navbar hover effects */
+      .navbar .dropdown-menu {
+          margin-top: 0.5rem;
+      }
+
+      .navbar .dropdown-item:active {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+    </style>
 </body>
 </html>

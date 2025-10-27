@@ -8,22 +8,18 @@ import os
 import smtplib
 from email import encoders
 
-
-# sender_email = "sukheshdasari@gmail.com"
-# sender_password = "drer ssxn yxuk xwlz" 
-SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "sukheshdasari@gmail.com")
-SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD", "drer ssxn yxuk xwlz")   
-# SENDER_EMAIL = "examplenamez543@gmail.com"
-# SENDER_PASSWORD = "mfnppwcnqlmpzymc"
+# Email Configuration - Gmail
+SENDER_EMAIL = "vanshgosavi777@gmail.com"
+SENDER_PASSWORD = "pfry ijwv scdb pcio"
 
 def send_otp_email(email, otp):
     subject = 'Your OTP Code'
     body = f'Your OTP code is: {otp}'
 
-    
+
     msg = MIMEText(body)
     msg['Subject'] = subject
-    msg['From'] = SENDER_EMAIL 
+    msg['From'] = SENDER_EMAIL
     msg['To'] = email
 
     try:
@@ -32,7 +28,7 @@ def send_otp_email(email, otp):
             server.sendmail(SENDER_EMAIL, email, msg.as_string())
     except Exception as e:
         print(f'Error sending email: {str(e)}')
-    
+
 def approval_status_mail(email, name):
     subject = f'Hi, {name}  '
     body = f'{name} , Your registration is not approved by Admin. \nWait till admin approval after that u can login to ur account.\n\nor u can contact admin...\nThank YOu..'
@@ -49,7 +45,6 @@ def approval_status_mail(email, name):
     except Exception as e:
         print(f'Error sending email: {str(e)}')
 
-#### Sending mail to admin ....
 def sending_approval_req(admin, user):
     subject = f'A new user {user.Name} has signed up '
     body = f'Hi {admin.Name},\nA new user {user.Name} with user id - {user.UserID} is signed up. \nPlease approve their registration so that he can access the Dashboard.'
@@ -67,7 +62,6 @@ def sending_approval_req(admin, user):
     except Exception as e:
         print(f'Error sending email: {str(e)}')
 
-### USER deletion or approval..
 def user_deleted(email, user):
     subject = f'Hi, {user.UserName}  '
     body = f'{user.UserName} ,  \nYour ur registration is removed ...!!'
@@ -82,7 +76,7 @@ def user_deleted(email, user):
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.sendmail(SENDER_EMAIL, email, msg.as_string())
     except Exception as e:
-        print(f'Error sending email: {str(e)}') 
+        print(f'Error sending email: {str(e)}')
 
 def user_approved(email, user):
     subject = f'Hi, {user.UserName}  '
@@ -98,15 +92,14 @@ def user_approved(email, user):
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.sendmail(SENDER_EMAIL, email, msg.as_string())
     except Exception as e:
-        print(f'Error sending email: {str(e)}') 
+        print(f'Error sending email: {str(e)}')
 
 
 
-####  TEAM 2 ...
 
 def send_emails_to_users(email_list, project_name, proj_desc, roles):
     sender_email = "sukheshdasari@gmail.com"
-    sender_password = "drerssxnyxukxwlz"  
+    sender_password = "drerssxnyxukxwlz"
     subject = "Project Assignment Notification"
 
     try:
@@ -135,13 +128,12 @@ def send_emails_to_users(email_list, project_name, proj_desc, roles):
         print(f"Failed to send email: {e}")
 
 
-### Team 4
 
 def send_proj_assign_info(email_list, project_name,proj_desc,roles):
     sender_email = SENDER_EMAIL
     sender_password = SENDER_PASSWORD
     subject = "Project Assignment Notification"
-    
+
 
     try:
         for recipient_email, role in zip(email_list, roles):
@@ -171,22 +163,17 @@ def send_proj_assign_info(email_list, project_name,proj_desc,roles):
 
 def send_email_with_report(report_type, file_path):
     try:
-        # Email configuration
         sender_email = SENDER_EMAIL
         sender_password = SENDER_PASSWORD
         recipient_email = "examplenamez543@gmail.com"
 
-        # Get the report file based on the provided file_path
         latest_report = file_path
 
-        # Get current date and time
         current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Include date and time in the subject
         subject = f"{report_type} Report - {current_datetime}"
         body = f"Hello,\n\nPlease find the attached {report_type.lower()} report.\n\nBest regards,\nAgile Dashboard Team"
 
-        # Create the email
         msg = MIMEMultipart()
         msg['From'] = sender_email
         msg['To'] = recipient_email
@@ -203,7 +190,6 @@ def send_email_with_report(report_type, file_path):
             )
             msg.attach(part)
 
-        # Send the email
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
             server.login(sender_email, sender_password)
@@ -212,4 +198,3 @@ def send_email_with_report(report_type, file_path):
 
     except Exception as e:
         print(f"An error occurred while sending the email: {e}")
-

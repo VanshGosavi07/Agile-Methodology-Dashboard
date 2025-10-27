@@ -1,260 +1,830 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Agile Project Management Dashboard</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-      }
+<!DOCTYPE html><!DOCTYPE html>
 
-      body {
+<html lang="en"><html lang="en">
+
+<head>  <head>
+
+    <meta charset="UTF-8">    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Analytics Dashboard - Agile Project Management</title>    <title>Agile Project Management Dashboard</title>
+
+    <!-- Bootstrap CSS -->    <link
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">      rel="stylesheet"
+
+    <!-- Font Awesome -->      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">    />
+
+    <!-- Chart.js -->    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>    <style>
+
+    <!-- Custom Theme -->      * {
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/unified-theme.css') }}">        margin: 0;
+
+    <style>        padding: 0;
+
+        body {        box-sizing: border-box;
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);        font-family: Arial, sans-serif;
+
+            min-height: 100vh;      }
+
+            background-attachment: fixed;
+
+        }      body {
+
         background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e, #1a1a2e);
-        color: #fff;
-        min-height: 100vh;
-        animation: gradientBG 15s ease infinite;
-        background-size: 400% 400%;
-        padding-top: 80px;
-        padding-bottom: 60px;
-      }
+
+        .chart-card {        color: #fff;
+
+            background: white;        min-height: 100vh;
+
+            border-radius: 1rem;        animation: gradientBG 15s ease infinite;
+
+            padding: 1.5rem;        background-size: 400% 400%;
+
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);        padding-top: 80px;
+
+            height: 100%;        padding-bottom: 60px;
+
+            transition: transform 0.3s, box-shadow 0.3s;      }
+
+        }
 
       @keyframes gradientBG {
-        0% {
-          background-position: 0% 50%;
-        }
-        50% {
+
+        .chart-card:hover {        0% {
+
+            transform: translateY(-5px);          background-position: 0% 50%;
+
+            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.25);        }
+
+        }        50% {
+
           background-position: 100% 50%;
-        }
-        100% {
-          background-position: 0% 50%;
-        }
-      } 
 
-      .header {
+        .chart-card h5 {        }
+
+            color: #667eea;        100% {
+
+            font-weight: 700;          background-position: 0% 50%;
+
+            margin-bottom: 1rem;        }
+
+            border-bottom: 3px solid #667eea;      } 
+
+            padding-bottom: 0.5rem;
+
+        }      .header {
+
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-        background: rgb(92, 56, 175);
-        color: white;
-        padding: 20px 40px;
-        text-align: center;
-        font-size: 2rem;
+
+        .stat-card {        align-items: center;
+
+            background: white;        justify-content: center;
+
+            border-radius: 1rem;        gap: 20px;
+
+            padding: 1.5rem;        background: rgb(92, 56, 175);
+
+            text-align: center;        color: white;
+
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);        padding: 20px 40px;
+
+            transition: transform 0.3s;        text-align: center;
+
+        }        font-size: 2rem;
+
         font-weight: bold;
-        position: fixed;
-        width: 100%;
-        top: 0;
+
+        .stat-card:hover {        position: fixed;
+
+            transform: translateY(-5px);        width: 100%;
+
+        }        top: 0;
+
         left: 0;
-        z-index: 1000;
-      }
-      .logo {
-        height: 50px;
+
+        .stat-icon {        z-index: 1000;
+
+            font-size: 3rem;      }
+
+            margin-bottom: 1rem;      .logo {
+
+        }        height: 50px;
+
         width: auto;
-        margin-right: 15px;
-    }
 
-      .profile {
-        position: absolute;
+        .stat-value {        margin-right: 15px;
+
+            font-size: 2.5rem;    }
+
+            font-weight: 700;
+
+            margin-bottom: 0.5rem;      .profile {
+
+        }        position: absolute;
+
         right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        display: flex;
-        align-items: center;
+
+        .stat-label {        top: 50%;
+
+            color: #718096;        transform: translateY(-50%);
+
+            font-weight: 600;        display: flex;
+
+        }        align-items: center;
+
         gap: 10px;
-        font-size: 1.2rem;
-        font-weight: bold;
-      }
 
-      .profile-pic {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        background: #fff;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-      }
+        .page-title {        font-size: 1.2rem;
 
-      .dashboard-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* Changed to 2 columns */
-        gap: 30px;
-        padding: 30px;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
+            color: white;        font-weight: bold;
 
-      .card {
-        background: rgba(26, 26, 46, 0.7);
-        backdrop-filter: blur(10px);
-        border-radius: 25px;
-        padding: 25px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        transition: all 0.4s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.1),
-          rgba(255, 255, 255, 0)
-        );
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);      }
+
+            margin-bottom: 2rem;
+
+        }      .profile-pic {
+
+    </style>        width: 40px;
+
+</head>        height: 40px;
+
+<body>        border-radius: 50%;
+
+    <!-- Bootstrap Navbar -->        object-fit: cover;
+
+    <nav class="navbar navbar-expand-lg shadow-sm sticky-top" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">        background: #fff;
+
+        <div class="container-fluid px-4">        border: 2px solid rgba(255, 255, 255, 0.2);
+
+            <a class="navbar-brand d-flex align-items-center text-white" href="/projects/{{user_role}}/{{user_id}}">      }
+
+                <img src="{{ url_for('static',filename='images/logo3.jpg') }}" alt="Logo" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+
+                <span class="fw-bold fs-5">AGILE PROJECT MANAGEMENT</span>      .dashboard-container {
+
+            </a>        display: grid;
+
+                    grid-template-columns: repeat(2, 1fr); /* Changed to 2 columns */
+
+            <!-- User Section -->        gap: 30px;
+
+            <div class="d-flex align-items-center gap-3">        padding: 30px;
+
+                <div class="text-white d-none d-md-flex align-items-center gap-2">        max-width: 1400px;
+
+                    <i class="fas fa-user-circle fs-4"></i>        margin: 0 auto;
+
+                    <span class="fw-semibold">Hello, {{ user_name }}!</span>      }
+
+                </div>
+
+                      .card {
+
+                <!-- Dropdown Menu -->        background: rgba(26, 26, 46, 0.7);
+
+                <div class="dropdown">        backdrop-filter: blur(10px);
+
+                    <button class="btn btn-link p-0 border-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">        border-radius: 25px;
+
+                        <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile" class="rounded-circle border-white" style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 3px solid white;">        padding: 25px;
+
+                    </button>        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown" style="min-width: 200px;">        transition: all 0.4s ease;
+
+                        <li class="px-3 py-2 border-bottom">        border: 1px solid rgba(255, 255, 255, 0.1);
+
+                            <small class="text-muted">Signed in as</small>        background: linear-gradient(
+
+                            <div class="fw-bold text-dark">{{ user_name }}</div>          135deg,
+
+                        </li>          rgba(255, 255, 255, 0.1),
+
+                        <li><a class="dropdown-item py-2" href="#"><i class="fas fa-user-circle me-2"></i> My Profile</a></li>          rgba(255, 255, 255, 0)
+
+                        <li><a class="dropdown-item py-2" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>        );
+
+                        <li><hr class="dropdown-divider"></li>        -webkit-backdrop-filter: blur(10px);
+
+                        <li><a class="dropdown-item py-2 text-danger fw-semibold" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>        border: 1px solid rgba(255, 255, 255, 0.18);
+
+                    </ul>        display: flex;
+
+                </div>        flex-direction: column;
+
+            </div>        align-items: center;
+
+        </div>      }
+
+    </nav>
 
       .card img {
-        width: 100%;
-        height: auto;
-        max-width: 500px;
-        object-fit: contain;
-        margin-top: 15px;
-      }
 
-      .card:hover {
-        transform: translateY(-5px);
+    <!-- Main Container -->        width: 100%;
+
+    <div class="container my-5">        height: auto;
+
+        <!-- Page Title -->        max-width: 500px;
+
+        <div class="text-center mb-5">        object-fit: contain;
+
+            <h1 class="page-title display-4 fw-bold">        margin-top: 15px;
+
+                <i class="fas fa-chart-bar"></i> Analytics Dashboard      }
+
+            </h1>
+
+            <p class="text-white fs-5">Comprehensive Project Analytics & Insights</p>      .card:hover {
+
+        </div>        transform: translateY(-5px);
+
         box-shadow: 0 12px 45px rgba(0, 0, 0, 0.4);
-        border-color: rgba(255, 255, 255, 0.2);
-        background: rgba(26, 26, 46, 0.8);
-      }
 
-      .card h3 {
-        margin-bottom: 20px;
-        font-size: 1.4rem;
-        color: #fff;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 12px;
-        width: 100%;
-        text-align: center;
-      }
+        <!-- Statistics Cards -->        border-color: rgba(255, 255, 255, 0.2);
 
-      
+        <div class="row g-4 mb-5">        background: rgba(26, 26, 46, 0.8);
 
-      /* Footer */
-      .footer {
-        background: rgb(92, 56, 175);
-        color: white;
-        text-align: center;
-        padding: 10px 0;
-        font-size: 1rem;
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-      }
+            <div class="col-md-3">      }
 
-      @media (max-width: 1200px) {
-        .dashboard-container {
-          grid-template-columns: 1fr;
-          padding: 20px;
-        }
-        .card {
-          width: 100%;
-          max-width: 600px;
-          margin: 0 auto;
-        }
+                <div class="stat-card" style="border-top: 4px solid #667eea;">
+
+                    <div class="stat-icon" style="color: #667eea;">      .card h3 {
+
+                        <i class="fas fa-project-diagram"></i>        margin-bottom: 20px;
+
+                    </div>        font-size: 1.4rem;
+
+                    <div class="stat-value" id="totalProjects">0</div>        color: #fff;
+
+                    <div class="stat-label">Total Stories</div>        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+
+                </div>        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+
+            </div>        padding-bottom: 12px;
+
+            <div class="col-md-3">        width: 100%;
+
+                <div class="stat-card" style="border-top: 4px solid #48bb78;">        text-align: center;
+
+                    <div class="stat-icon" style="color: #48bb78;">      }
+
+                        <i class="fas fa-check-circle"></i>
+
+                    </div>      
+
+                    <div class="stat-value" id="completedStories">0</div>
+
+                    <div class="stat-label">Completed Stories</div>      /* Footer */
+
+                </div>      .footer {
+
+            </div>        background: rgb(92, 56, 175);
+
+            <div class="col-md-3">        color: white;
+
+                <div class="stat-card" style="border-top: 4px solid #fb8c00;">        text-align: center;
+
+                    <div class="stat-icon" style="color: #fb8c00;">        padding: 10px 0;
+
+                        <i class="fas fa-running"></i>        font-size: 1rem;
+
+                    </div>        position: fixed;
+
+                    <div class="stat-value" id="totalSprints">0</div>        width: 100%;
+
+                    <div class="stat-label">Total Sprints</div>        bottom: 0;
+
+                </div>      }
+
+            </div>
+
+            <div class="col-md-3">      @media (max-width: 1200px) {
+
+                <div class="stat-card" style="border-top: 4px solid #9C27B0;">        .dashboard-container {
+
+                    <div class="stat-icon" style="color: #9C27B0;">          grid-template-columns: 1fr;
+
+                        <i class="fas fa-users"></i>          padding: 20px;
+
+                    </div>        }
+
+                    <div class="stat-value" id="teamMembers">0</div>        .card {
+
+                    <div class="stat-label">Team Members</div>          width: 100%;
+
+                </div>          max-width: 600px;
+
+            </div>          margin: 0 auto;
+
+        </div>        }
+
         .metrics-row {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
 
-      @media (max-width: 768px) {
-        .metrics-row {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .header {
-          font-size: 1.5rem;
-          padding: 15px 20px;
-        }
-        .profile {
-          font-size: 1rem;
-        }
-        .profile-pic {
+        <!-- Charts Section 1 -->          grid-template-columns: repeat(3, 1fr);
+
+        <h2 class="text-white mb-4"><i class="fas fa-chart-pie me-2"></i> User Story Analytics</h2>        }
+
+        <div class="row g-4 mb-5">      }
+
+            <div class="col-md-6">
+
+                <div class="chart-card">      @media (max-width: 768px) {
+
+                    <h5><i class="fas fa-tasks me-2"></i> Task Status Distribution</h5>        .metrics-row {
+
+                    <canvas id="statusChart"></canvas>          grid-template-columns: repeat(2, 1fr);
+
+                </div>        }
+
+            </div>        .header {
+
+            <div class="col-md-6">          font-size: 1.5rem;
+
+                <div class="chart-card">          padding: 15px 20px;
+
+                    <h5><i class="fas fa-users me-2"></i> Team Performance</h5>        }
+
+                    <canvas id="teamChart"></canvas>        .profile {
+
+                </div>          font-size: 1rem;
+
+            </div>        }
+
+        </div>        .profile-pic {
+
           width: 30px;
-          height: 30px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Header section remains unchanged -->
-    <div class="header">
-      <img src="{{ url_for('static', filename='/images/logo.png') }}" alt="Logo" class="logo">
-      AGILE PROJECT MANAGEMENT DASHBOARD
-      <div class="profile">
-        <span>Hello Vansh!</span>
-        <img
-          src=rc="{{ url_for('static', filename='/profile.jpg') }}"
-          alt="Profile Picture"
-          class="profile-pic"
-        />
-      </div>
-    </div>
 
+        <!-- Charts Section 2 -->          height: 30px;
 
-    <!-- Dashboard container with charts -->
-    <div class="dashboard-container">
-      <div class="card">
-        <h3>Burn Down Chart</h3>
-        <img
-          src="data:image/png;base64,{{ burn_down_url }}"
-          class="img-fluid rounded"
-          alt="Burn-Down Chart"
+        <h2 class="text-white mb-4"><i class="fas fa-chart-line me-2"></i> Sprint Analytics</h2>        }
+
+        <div class="row g-4 mb-5">      }
+
+            <div class="col-md-6">    </style>
+
+                <div class="chart-card">  </head>
+
+                    <h5><i class="fas fa-percentage me-2"></i> Sprint Progress</h5>  <body>
+
+                    <canvas id="progressChart"></canvas>    <!-- Header section remains unchanged -->
+
+                </div>    <div class="header">
+
+            </div>      <img src="{{ url_for('static', filename='/images/logo.png') }}" alt="Logo" class="logo">
+
+            <div class="col-md-6">      AGILE PROJECT MANAGEMENT DASHBOARD
+
+                <div class="chart-card">      <div class="profile">
+
+                    <h5><i class="fas fa-tachometer-alt me-2"></i> Velocity Trend</h5>        <span>Hello Vansh!</span>
+
+                    <canvas id="velocityChart"></canvas>        <img
+
+                </div>          src=rc="{{ url_for('static', filename='/profile.jpg') }}"
+
+            </div>          alt="Profile Picture"
+
+        </div>          class="profile-pic"
+
         />
-      </div>
-      <div class="card">
-        <h3>Burn Up Chart</h3>
+
+        <!-- Charts Section 3 -->      </div>
+
+        <h2 class="text-white mb-4"><i class="fas fa-fire me-2"></i> Burn Charts</h2>    </div>
+
+        <div class="row g-4 mb-5">
+
+            <div class="col-md-6">
+
+                <div class="chart-card">    <!-- Dashboard container with charts -->
+
+                    <h5><i class="fas fa-arrow-trend-down me-2"></i> Burn Down Chart</h5>    <div class="dashboard-container">
+
+                    <canvas id="burnDownChart"></canvas>      <div class="card">
+
+                </div>        <h3>Burn Down Chart</h3>
+
+            </div>        <img
+
+            <div class="col-md-6">          src="data:image/png;base64,{{ burn_down_url }}"
+
+                <div class="chart-card">          class="img-fluid rounded"
+
+                    <h5><i class="fas fa-arrow-trend-up me-2"></i> Burn Up Chart</h5>          alt="Burn-Down Chart"
+
+                    <canvas id="burnUpChart"></canvas>        />
+
+                </div>      </div>
+
+            </div>      <div class="card">
+
+        </div>        <h3>Burn Up Chart</h3>
+
         <img
-          src="data:image/png;base64,{{ burn_up_url }}"
-          class="img-fluid rounded"
-          alt="Burn-Up Chart"
-        />
-      </div>
+
+        <!-- Footer -->          src="data:image/png;base64,{{ burn_up_url }}"
+
+        <div class="text-center text-white mt-5 py-4">          class="img-fluid rounded"
+
+            <p class="mb-0">&copy; 2025 Agile Project Management Dashboard | <strong>Powered by Innovation</strong></p>          alt="Burn-Up Chart"
+
+        </div>        />
+
+    </div>      </div>
+
       <div class="card">
-        <h3>Velocity Trend</h3>
-        <img
+
+    <!-- Bootstrap JS -->        <h3>Velocity Trend</h3>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>        <img
+
           src="data:image/png;base64,{{ velocity_chart_url }}"
-          class="img-fluid rounded"
-          alt="Velocity Chart"
-        />
-      </div>
-      <div class="card">
-        <h3>Sprint Status</h3>
-        <img
-          src="data:image/png;base64,{{ sprint_progress_url }}"
-          class="img-fluid rounded"
-          alt="Sprint Progress Chart"
-        />
-      </div>
-      <div class="card">
-        <h3>Task Status</h3>
-        <img
-          src="data:image/png;base64,{{ donut_chart_url }}"
-          class="img-fluid rounded"
-          alt="Donut Chart"
-        />
-      </div>
-      <div class="card">
-        <h3>Performance chart</h3>
-        <img
-          src="data:image/png;base64,{{ performance_chart_url }}"
-          class="img-fluid rounded"
-          alt="performance Chart"
-        />
-      </div>
-    </div>
 
-    <div class="footer">
-      &copy; 2024 Agile Project Management Dashboard. All Rights Reserved.
-    </div>
-  </body>
+    <!-- Chart Initialization Script -->          class="img-fluid rounded"
+
+    <script>          alt="Velocity Chart"
+
+        // Chart colors        />
+
+        const colors = {      </div>
+
+            primary: '#667eea',      <div class="card">
+
+            success: '#48bb78',        <h3>Sprint Status</h3>
+
+            warning: '#fb8c00',        <img
+
+            danger: '#f44336',          src="data:image/png;base64,{{ sprint_progress_url }}"
+
+            info: '#1e88e5',          class="img-fluid rounded"
+
+            purple: '#9C27B0'          alt="Sprint Progress Chart"
+
+        };        />
+
+      </div>
+
+        async function initDashboard() {      <div class="card">
+
+            try {        <h3>Task Status</h3>
+
+                const response = await fetch("/api/chart-data");        <img
+
+                const data = await response.json();          src="data:image/png;base64,{{ donut_chart_url }}"
+
+          class="img-fluid rounded"
+
+                // Update statistics cards          alt="Donut Chart"
+
+                document.getElementById('totalProjects').textContent = data.statusCounts?.total || 0;        />
+
+                document.getElementById('completedStories').textContent = data.statusCounts?.completed || 0;      </div>
+
+                document.getElementById('totalSprints').textContent = data.sprintData?.length || 0;      <div class="card">
+
+                document.getElementById('teamMembers').textContent = data.teamPerformance?.length || 0;        <h3>Performance chart</h3>
+
+        <img
+
+                // 1. Status Distribution Chart          src="data:image/png;base64,{{ performance_chart_url }}"
+
+                new Chart(document.getElementById("statusChart"), {          class="img-fluid rounded"
+
+                    type: "doughnut",          alt="performance Chart"
+
+                    data: {        />
+
+                        labels: ["Completed", "In Progress", "Not Started"],      </div>
+
+                        datasets: [{    </div>
+
+                            data: [
+
+                                data.statusCounts?.completed || 0,    <div class="footer">
+
+                                data.statusCounts?.inProgress || 0,      &copy; 2024 Agile Project Management Dashboard. All Rights Reserved.
+
+                                data.statusCounts?.notStarted || 0    </div>
+
+                            ],  </body>
+
+                            backgroundColor: [colors.success, colors.warning, colors.info],</html>
+
+                            borderWidth: 3,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: { size: 12, weight: 'bold' }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        let percentage = ((context.parsed / total) * 100).toFixed(1);
+                                        return `${context.label}: ${context.parsed} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // 2. Team Performance Chart
+                new Chart(document.getElementById("teamChart"), {
+                    type: "bar",
+                    data: {
+                        labels: data.teamPerformance?.map(d => d.team) || [],
+                        datasets: [
+                            {
+                                label: "Completed Tasks",
+                                data: data.teamPerformance?.map(d => d.completedTasks) || [],
+                                backgroundColor: colors.warning,
+                                borderRadius: 5
+                            },
+                            {
+                                label: "Completed Stories",
+                                data: data.teamPerformance?.map(d => d.completedStories) || [],
+                                backgroundColor: colors.success,
+                                borderRadius: 5
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: { size: 12, weight: 'bold' }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.05)' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+
+                // 3. Sprint Progress Chart
+                new Chart(document.getElementById("progressChart"), {
+                    type: "line",
+                    data: {
+                        labels: data.sprintProgress?.map(d => `Sprint ${d.sprintNo}`) || [],
+                        datasets: [{
+                            label: "Completion %",
+                            data: data.sprintProgress?.map(d => d.progress) || [],
+                            borderColor: '#9C27B0',
+                            backgroundColor: 'rgba(156, 39, 176, 0.2)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#9C27B0',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: { size: 12, weight: 'bold' }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Sprint Progress - Story Completion Rate',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                min: 0,
+                                max: 100,
+                                ticks: { 
+                                    callback: value => `${value}%`,
+                                    stepSize: 20
+                                },
+                                grid: { color: 'rgba(0,0,0,0.05)' },
+                                title: { display: true, text: 'Completion %' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                title: { display: true, text: 'Sprint' }
+                            }
+                        }
+                    }
+                });
+
+                // 4. Velocity Trend Chart
+                new Chart(document.getElementById("velocityChart"), {
+                    type: "bar",
+                    data: {
+                        labels: data.sprintData?.map(d => `Sprint ${d.sprintNo}`) || [],
+                        datasets: [
+                            {
+                                label: "Completed Story Points",
+                                data: data.sprintData?.map(d => d.actualEffort || 0) || [],
+                                backgroundColor: '#4CAF50',
+                                borderRadius: 8
+                            },
+                            {
+                                label: "Planned Velocity",
+                                data: data.sprintData?.map(d => d.velocity || 0) || [],
+                                backgroundColor: '#2196F3',
+                                borderRadius: 8
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: { size: 12, weight: 'bold' }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Velocity - Planned vs Completed',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.05)' },
+                                title: { display: true, text: 'Story Points' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                title: { display: true, text: 'Sprint' }
+                            }
+                        }
+                    }
+                });
+
+                // 5. Burn Down Chart
+                const totalScope = data.sprintData?.reduce((sum, d) => sum + (d.velocity || 0), 0) || 0;
+
+                new Chart(document.getElementById("burnDownChart"), {
+                    type: "line",
+                    data: {
+                        labels: data.sprintData?.map(d => `Sprint ${d.sprintNo}`) || [],
+                        datasets: [
+                            {
+                                label: "Ideal Burn Down",
+                                data: data.sprintData?.map((d, i) => {
+                                    return totalScope - (totalScope / data.sprintData.length * (i + 1));
+                                }) || [],
+                                borderColor: '#2196F3',
+                                borderWidth: 2,
+                                borderDash: [10, 5],
+                                tension: 0,
+                                fill: false,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#2196F3'
+                            },
+                            {
+                                label: "Actual Remaining",
+                                data: data.sprintData?.map(d => 
+                                    totalScope - (d.cumulativeCompleted || 0)
+                                ) || [],
+                                borderColor: '#F44336',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                fill: false,
+                                pointRadius: 5,
+                                pointBackgroundColor: '#F44336',
+                                pointHoverRadius: 7
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: { size: 12, weight: 'bold' }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Burn Down Chart - Work Remaining',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.05)' },
+                                title: { display: true, text: 'Story Points Remaining' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                title: { display: true, text: 'Sprint' }
+                            }
+                        }
+                    }
+                });
+
+                // 6. Burn Up Chart
+                new Chart(document.getElementById("burnUpChart"), {
+                    type: "line",
+                    data: {
+                        labels: data.sprintData?.map(d => `Sprint ${d.sprintNo}`) || [],
+                        datasets: [
+                            {
+                                label: "Total Scope",
+                                data: data.sprintData?.map(d => d.cumulativeEstimated || 0) || [],
+                                borderColor: '#1e88e5',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                backgroundColor: 'rgba(30, 136, 229, 0.1)',
+                                tension: 0,
+                                fill: true,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#1e88e5'
+                            },
+                            {
+                                label: "Completed Work",
+                                data: data.sprintData?.map(d => d.cumulativeCompleted || 0) || [],
+                                borderColor: '#4CAF50',
+                                borderWidth: 3,
+                                backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                                tension: 0.3,
+                                fill: true,
+                                pointRadius: 5,
+                                pointBackgroundColor: '#4CAF50'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: { size: 12, weight: 'bold' }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.05)' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error loading dashboard data:", error);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", initDashboard);
+    </script>
+</body>
 </html>

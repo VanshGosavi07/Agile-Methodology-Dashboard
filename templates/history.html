@@ -1,165 +1,702 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login and Logout History</title>
+    <title>User History | Ludiflex</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <!-- Bootstrap 4.6.2 CSS -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+        crossorigin="anonymous"
+    />
+    
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        crossorigin="anonymous"
+    />
 
     <style>
-      /* Global Styles */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Poppins", sans-serif;
-      }
-
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        background: url(../../static/images/image.jpg) no-repeat center center fixed;
-        background-size: cover;
-        padding: 20px;
-      }
-
-      /* Container Styling */
-      .container {
-        width: 80%;
-        background: transparent;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        color: #fff;
-        border-radius: 12px;
-        padding: 30px 40px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      /* Heading Styling */
-      h1 {
-        text-align: center;
-        color: #ecbbbb;
-        margin-bottom: 40px;
-        font-size: 2rem;
-        font-weight: bold;
-      }
-
-      h1 a {
-        color: #3949ab;
-        text-decoration: none;
-      }
-
-      h1 a:hover {
-        text-decoration: underline;
-      }
-
-      /* Table Styling */
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 40px;
-      }
-
-      th, td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-      }
-
-      th {
-        background-color: #3949ab;
-        color: white;
-        font-weight: bold;
-      }
-
-      tr:nth-child(even) {
-        background-color: linear-gradient(to bottom, #87e0fd 57%, #05abe0 100%);
-      }
-
-      /* Status Styling */
-      .status {
-        padding: 6px 12px;
-        border-radius: 12px;
-        font-weight: bold;
-      }
-
-      /* No Data Text */
-      .no-data {
-        text-align: center;
-        font-style: italic;
-        color: black;
-      }
-
-      /* Button Styling */
-      .btn {
-        background-color: #fff;
-        color: #333;
-        font-size: 16px;
-        font-weight: 600;
-        padding: 10px 20px;
-        border-radius: 40px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        text-decoration: none;
-      }
-
-      .btn:hover {
-        background-color: #3949ab;
-        color: white;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-      }
-
-      /* Mobile Responsiveness */
-      @media (max-width: 768px) {
-        .container {
-          width: 90%;
-          padding: 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .btn {
-          width: 100%;
-          font-size: 14px;
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
-      }
+
+        /* Animated Background */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 25s infinite ease-in-out;
+        }
+
+        body::before {
+            width: 500px;
+            height: 500px;
+            background: white;
+            top: -250px;
+            left: -250px;
+        }
+
+        body::after {
+            width: 600px;
+            height: 600px;
+            background: white;
+            bottom: -300px;
+            right: -300px;
+            animation-delay: -12s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(50px, -50px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-30px, 30px) rotate(240deg);
+            }
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .navbar-brand img {
+            height: 45px;
+            width: auto;
+        }
+
+        .navbar-brand h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .navbar-brand i {
+            color: #667eea;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 10px;
+        }
+
+        .navbar-user img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #667eea;
+        }
+
+        .navbar-user span {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .btn-nav-logout {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-nav-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-back-dashboard {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .btn-back-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Main Container */
+        .history-container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s ease-out;
+            margin: 0 auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Section */
+        .history-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 35px 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .history-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .history-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .history-header p {
+            margin: 0;
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        /* Back Button in Header */
+        .btn-back-header {
+            position: absolute;
+            top: 35px;
+            right: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back-header:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(-3px);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Body Section */
+        .history-body {
+            padding: 40px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #4a5568;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box i {
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        /* Table Container */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        thead th {
+            color: white;
+            font-weight: 600;
+            padding: 18px 15px;
+            text-align: left;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        thead th i {
+            margin-right: 8px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+            transform: scale(1.01);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody td {
+            padding: 16px 15px;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        /* Action Badges */
+        .action-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .action-login {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .action-logout {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        /* Role Badges */
+        .role-badge {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        /* No Data Message */
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+        }
+
+        .no-data i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            color: #cbd5e0;
+        }
+
+        .no-data h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .no-data p {
+            font-size: 1rem;
+            color: #718096;
+        }
+
+        /* Stats Summary */
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-card h4 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 10px 0 5px 0;
+        }
+
+        .stat-card p {
+            font-size: 0.9rem;
+            color: #718096;
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .history-body {
+                padding: 30px;
+            }
+
+            .table-container {
+                overflow-x: scroll;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .history-container {
+                border-radius: 15px;
+            }
+
+            .history-header {
+                padding: 30px 25px;
+            }
+
+            .history-header h1 {
+                font-size: 1.6rem;
+            }
+
+            .history-icon {
+                font-size: 3rem;
+            }
+
+            .btn-back-header {
+                position: static;
+                margin-top: 20px;
+            }
+
+            .history-body {
+                padding: 25px 20px;
+            }
+
+            thead th,
+            tbody td {
+                padding: 12px 10px;
+                font-size: 0.85rem;
+            }
+
+            .stats-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                padding: 12px 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .navbar-brand h1 {
+                font-size: 1.1rem;
+            }
+
+            .navbar-brand img {
+                height: 35px;
+            }
+
+            .navbar-right {
+                width: 100%;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .navbar-user {
+                order: -1;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .navbar-user span {
+                font-size: 0.85rem;
+            }
+
+            .btn-nav-logout,
+            .btn-back-dashboard {
+                padding: 8px 15px;
+                font-size: 0.85rem;
+            }
+
+            .history-header {
+                padding: 25px 20px;
+            }
+
+            .history-header h1 {
+                font-size: 1.4rem;
+            }
+
+            .history-body {
+                padding: 20px 15px;
+            }
+
+            thead th,
+            tbody td {
+                padding: 10px 8px;
+                font-size: 0.8rem;
+            }
+
+            .action-badge,
+            .role-badge {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>
-        User Login and Logout History 
-        <a href="{{url_for('auth.admin_dashboard')}}" class="btn btn-outline-secondary">Admin Dashboard</a>
-      </h1> 
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="{{ url_for('auth.admin_dashboard') }}" class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo2.png') }}" alt="Logo">
+            <h1><i class="fas fa-bolt"></i> Ludiflex</h1>
+        </a>
+        <div class="navbar-right">
+            <a href="{{ url_for('auth.admin_dashboard') }}" class="btn-back-dashboard">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <div class="navbar-user">
+                <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile">
+                <span>{{ current_user.UserName }}</span>
+            </div>
+            <form method="POST" action="{{ url_for('auth.logout') }}" style="margin: 0;">
+                <button type="submit" class="btn-nav-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
 
-      <table>
-        <thead>
-          <tr>
-            <th>User_id</th>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Action</th>
-            <th>Timestamp</th>
-            <th>IP Address</th>
-          </tr>
-        </thead>
-        <tbody id="historyTable">
-          {% for record in history %}
-          <tr>
-            <td>{{ record.id }}</td>
-            <td>{{ record.username }}</td>
-            <td>{{ record.role }}</td>
-            <td>{{ record.action }}</td>
-            <td>{{ record.timestamp }}</td>
-            <td>{{ record.ip_address }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="history-container">
+        <!-- Header -->
+        <div class="history-header">
+            <div class="history-icon">
+                <i class="fas fa-history"></i>
+            </div>
+            <h1>User Login & Logout History</h1>
+            <p>Complete activity timeline and session tracking</p>
+            <a href="{{ url_for('auth.admin_dashboard') }}" class="btn-back-header">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
 
-      {% if history|length == 0 %}
-        <p class="no-data">No history available</p>
-      {% endif %}
+        <!-- Body -->
+        <div class="history-body">
+            <!-- Info Box -->
+            <div class="info-box">
+                <p>
+                    <i class="fas fa-info-circle"></i>
+                    <span>This page displays all login and logout activities for the selected user, including timestamps and IP addresses for security monitoring.</span>
+                </p>
+            </div>
+
+            <!-- Stats Summary -->
+            {% if history|length > 0 %}
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h4>{{ history|length }}</h4>
+                    <p>Total Records</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <h4>{{ history|selectattr('action', 'equalto', 'Login')|list|length }}</h4>
+                    <p>Login Events</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <h4>{{ history|selectattr('action', 'equalto', 'Logout')|list|length }}</h4>
+                    <p>Logout Events</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- History Table -->
+            {% if history|length > 0 %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> User ID</th>
+                            <th><i class="fas fa-user"></i> Username</th>
+                            <th><i class="fas fa-user-tag"></i> Role</th>
+                            <th><i class="fas fa-bolt"></i> Action</th>
+                            <th><i class="fas fa-clock"></i> Timestamp</th>
+                            <th><i class="fas fa-network-wired"></i> IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in history %}
+                        <tr>
+                            <td><strong>{{ record.id }}</strong></td>
+                            <td>{{ record.username }}</td>
+                            <td>
+                                <span class="role-badge">{{ record.role }}</span>
+                            </td>
+                            <td>
+                                {% if record.action == 'Login' %}
+                                <span class="action-badge action-login">
+                                    <i class="fas fa-sign-in-alt"></i> Login
+                                </span>
+                                {% else %}
+                                <span class="action-badge action-logout">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>{{ record.timestamp }}</td>
+                            <td>
+                                <code style="background: #edf2f7; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem;">
+                                    {{ record.ip_address }}
+                                </code>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">
+                <i class="fas fa-inbox"></i>
+                <h3>No History Available</h3>
+                <p>There are no login or logout records for this user yet.</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
-  </body>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

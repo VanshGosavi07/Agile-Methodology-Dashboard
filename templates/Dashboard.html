@@ -3,184 +3,376 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Agile Project Management Dashboard</title>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }} "/>
+    <title>Dashboard - Agile Project Management</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/unified-theme.css') }}" />
     <style>
-      
-      
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        background-attachment: fixed;
+      }
+
+      .stat-card-modern {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+        border-left: 5px solid;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card-modern::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .stat-card-modern:hover::before {
+        opacity: 1;
+      }
+
+      .stat-card-modern:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+      }
+
+      .stat-card-modern.primary {
+        border-left-color: #667eea;
+      }
+
+      .stat-card-modern.success {
+        border-left-color: #48bb78;
+      }
+
+      .stat-card-modern.warning {
+        border-left-color: #ed8936;
+      }
+
+      .stat-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.8;
+      }
+
+      .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.5rem;
+      }
+
+      .project-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.08);
+        transition: all 0.3s;
+        border-left: 4px solid #667eea;
+      }
+
+      .project-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+        transform: translateY(-3px);
+      }
+
+      .badge-custom {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .badge-active {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+
+      .badge-completed {
+        background: #bee3f8;
+        color: #1a365d;
+      }
+
+      .badge-on-hold {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+
+      @media (max-width: 768px) {
+        .stat-icon {
+          font-size: 2rem;
+        }
+        .stat-number {
+          font-size: 2rem;
+        }
+      }
     </style>
   </head>
   <body>
-    <div class="dashboard-container">
-      <!-- Header -->
-      <div class="header">
-        <img
-                  src="{{ url_for('static',filename='images/logo3.jpg') }}"
-                  alt="Logo"
-                  class="profile-pic"
-              />
-        <h1>AGILE PROJECT MANAGEMENT DASHBOARD</h1>
-      </div>
-
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <!-- Search Bar -->
-        <div class="search-bar">
-          <input
-            type="text"
-            id="search-input"
-            placeholder="Search projects..."
-          />
-          <select id="search-filter">
-            <option value="project_name">Project Name</option>
-            <option value="product_manager">Product Manager</option>
-            <option value="start_date">Start Date</option>
-            <option value="end_date">End Date</option>
-            <option value="status">Status</option> 
-          </select>
-          <button id="search-btn">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-
-        <div class="greeting">
-          <span>Hello, {{ user_name }}!</span>
-
+    <!-- Bootstrap Navbar with Enhanced Logout -->
+    <nav class="navbar navbar-expand-lg shadow-sm sticky-top" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center text-white" href="#">
+          <img src="{{ url_for('static',filename='images/logo3.jpg') }}" alt="Logo" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+          <span class="fw-bold fs-5">AGILE PROJECT MANAGEMENT</span>
+        </a>
+        
+        <!-- User Section -->
+        <div class="d-flex align-items-center gap-3">
+          <div class="text-white d-none d-md-flex align-items-center gap-2">
+            <i class="fas fa-user-circle fs-4"></i>
+            <span class="fw-semibold">Hello, {{ user_name }}!</span>
+          </div>
+          
+          <!-- Dropdown Menu -->
           <div class="dropdown">
-            <a href="{{url_for('auth.login')}}"
-              ><img
-                src="{{ url_for('static', filename=current_user.profile_picture) }}"
-                alt="Profile"
-                class="profile-pic"
-            /></a>
-            <div class="dropdown-content">
-              <a href="{{url_for('auth.logout')}}" class="logout">Logout</a>
-            </div>
+            <button class="btn btn-link p-0 border-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile" class="rounded-circle border-white" style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 3px solid white;">
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown" style="min-width: 200px;">
+              <li class="px-3 py-2 border-bottom">
+                <small class="text-muted">Signed in as</small>
+                <div class="fw-bold text-dark">{{ user_name }}</div>
+                <small class="text-muted">Role: <span class="badge bg-primary">{{ role }}</span></small>
+              </li>
+              <li><a class="dropdown-item py-2" href="#"><i class="fas fa-user-circle me-2"></i> My Profile</a></li>
+              <li><a class="dropdown-item py-2" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item py-2 text-danger fw-semibold" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+            </ul>
           </div>
         </div>
       </div>
+    </nav>
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <script type="text/javascript">
-        alert("{{ messages[0][1] }}");  // Show success message in a popup
-    </script>
-    {% endif %}
+    <!-- Flash Messages with Bootstrap -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mt-4">
+          {% for category, message in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'info' }} alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+        </div>
+      {% endif %}
     {% endwith %}
 
-      <!-- Dashboard Content -->
-      <div class="dashboard-content">
-        <!-- Quick Stats Section -->
-        <div class="quick-stats">
-          <div class="stat-card stat-total">
-            <i class="fas fa-project-diagram"></i>
-            <div class="stat-card-content">
-              <h2>Total Projects</h2>
-              <h3 style="text-align: center">{{ total_projects }}</h3>
+    <!-- Main Container -->
+    <div class="container my-5">
+      <!-- Dashboard Stats Cards with Bootstrap -->
+      <div class="row g-4 mb-5">
+        <div class="col-lg-4 col-md-6">
+          <div class="stat-card-modern primary">
+            <div class="stat-icon text-primary">
+              <i class="fas fa-project-diagram"></i>
             </div>
-          </div>
-          <div class="stat-card stat-distribution">
-            <i class="fas fa-chart-pie"></i>
-            <div class="stat-card-content">
-              <h2>Active Projects</h2>
-              <h3 style="text-align: center">{{ active_projects }}</h3>
-            </div>
-          </div>
-          <div class="stat-card stat-completion">
-            <i class="fas fa-check-circle"></i>
-            <div class="stat-card-content">
-              <h2>On hold Projects</h2>
-              <h3 style="text-align: center">{{ on_hold_projects }}</h3>
-            </div>
+            <h3 class="stat-number text-dark">{{ total_projects }}</h3>
+            <p class="stat-label mb-0">Total Projects</p>
           </div>
         </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="stat-card-modern success">
+            <div class="stat-icon text-success">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="stat-number text-dark">{{ active_projects }}</h3>
+            <p class="stat-label mb-0">Active Projects</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="stat-card-modern warning">
+            <div class="stat-icon text-warning">
+              <i class="fas fa-pause-circle"></i>
+            </div>
+            <h3 class="stat-number text-dark">{{ on_hold_projects }}</h3>
+            <p class="stat-label mb-0">On Hold Projects</p>
+          </div>
+        </div>
+      </div>
 
-        <!-- Projects Section -->
-        <div class="projects-section">
-          <h2>Projects Underway</h2>
-          {% if role == "product owner" %}
-          <a href="/addproject" class="add-project-btn">
-            <i class="fas fa-plus"></i>Add Project
-          </a>
-          {% endif %}
-          <table class="project-table">
-            <thead>
-              <tr>
-                <th>Project Name</th>
-                <th>Product Manager</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Revised End Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for project in projects %}
-              <tr>
-                <td>{{ project.project_name }}</td>
-                <td>{{ project.product_owner }}</td>
-                <td>{{ project.start_date }}</td>
-                <td>{{ project.end_date }}</td>
-                <td>{{ project.revised_end_date }}</td>
-                <td><span class="status {% if project.status == 'Completed' %}completed{% elif project.status == 'On Hold' %}On-Hold{% else %}Active{% endif %}">
-                  {{ project.status }}
-              </span></td>
+      <!-- Projects Section with Bootstrap Card -->
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4 p-md-5">
+          <!-- Header with Add Button -->
+          <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom flex-wrap gap-3">
+            <h2 class="h3 fw-bold mb-0" style="color: #667eea;">
+              <i class="fas fa-tasks me-2"></i> Projects Underway
+            </h2>
+            {% if role in ["product owner", "admin"] %}
+            <a href="/addproject" class="btn btn-lg" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; font-weight: 600; border: none; box-shadow: 0 0.25rem 0.5rem rgba(72, 187, 120, 0.3);">
+              <i class="fas fa-plus-circle me-2"></i> Add New Project
+            </a>
+            {% else %}
+            <span class="badge bg-info" style="padding: 0.5rem 1rem;">
+              <i class="fas fa-info-circle me-1"></i> {{role|title}} - View Only Access
+            </span>
+            {% endif %}
+          </div>
 
-                <td class="action-buttons">
-                  {% if role in ["product owner", "scrum master", "team member"] %}
-                  <a
-                    href="{{url_for('viewproject', project_id=project.project_id)}}"
-                    class="action-btn view-btn"
-                  >
-                    <i class="fas fa-eye"></i> View
-                  </a>
-                  {% endif %}
-                  {% if role in ["product owner", "scrum master"] %}
-                  <a href="{{url_for('edit_project', project_id=project.project_id)}}" class="action-btn edit-btn">
-                    <i class="fas fa-edit"></i> Edit
-                  </a>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          <!-- Projects Table - Responsive -->
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <tr>
+                  <th class="py-3"><i class="fas fa-briefcase me-2"></i> Project Name</th>
+                  <th class="py-3"><i class="fas fa-user-tie me-2"></i> Product Manager</th>
+                  <th class="py-3"><i class="fas fa-calendar-alt me-2"></i> Start Date</th>
+                  <th class="py-3"><i class="fas fa-calendar-check me-2"></i> End Date</th>
+                  <th class="py-3"><i class="fas fa-calendar-plus me-2"></i> Revised End</th>
+                  <th class="py-3"><i class="fas fa-info-circle me-2"></i> Status</th>
+                  <th class="py-3 text-center"><i class="fas fa-cog me-2"></i> Actions</th>
+                </tr>
+              </thead>
+              <tbody id="project-table-body">
+                {% for project in projects %}
+                <tr>
+                  <td><strong class="text-primary">{{ project.project_name }}</strong></td>
+                  <td>{{ project.product_owner }}</td>
+                  <td><small class="text-muted">{{ project.start_date }}</small></td>
+                  <td><small class="text-muted">{{ project.end_date }}</small></td>
+                  <td><small class="text-muted">{{ project.revised_end_date or 'N/A' }}</small></td>
+                  <td>
+                    {% if project.status == 'Active' %}
+                    <span class="badge-custom badge-active">
+                      <i class="fas fa-check-circle"></i> {{ project.status }}
+                    </span>
+                    {% elif project.status == 'Completed' %}
+                    <span class="badge-custom badge-completed">
+                      <i class="fas fa-flag-checkered"></i> {{ project.status }}
+                    </span>
+                    {% elif project.status == 'On Hold' %}
+                    <span class="badge-custom badge-on-hold">
+                      <i class="fas fa-pause-circle"></i> {{ project.status }}
+                    </span>
+                    {% else %}
+                    <span class="badge bg-secondary">
+                      <i class="fas fa-hourglass-start"></i> {{ project.status }}
+                    </span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                      <a href="/viewproject/{{ project.project_id }}" class="btn btn-sm btn-primary" title="View Project Details">
+                        <i class="fas fa-eye"></i> View
+                      </a>
+                      {% if role in ["product owner", "admin"] %}
+                      <a href="/editproject/{{ project.project_id }}" class="btn btn-sm btn-warning" title="Edit Project">
+                        <i class="fas fa-edit"></i> Edit
+                      </a>
+                      {% endif %}
+                      {% if role == "scrum master" %}
+                      <span class="badge bg-secondary" title="Scrum Masters cannot edit projects">
+                        <i class="fas fa-lock"></i> No Edit
+                      </span>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="7" class="text-center py-5">
+                    <i class="fas fa-inbox text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                    <p class="h5 mt-3 mb-2 text-muted">No projects found</p>
+                    {% if role in ["product owner", "admin"] %}
+                    <p class="text-muted">Start by creating your first project!</p>
+                    <a href="/addproject" class="btn btn-primary mt-3">
+                      <i class="fas fa-plus me-2"></i> Create First Project
+                    </a>
+                    {% else %}
+                    <p class="text-muted">No projects assigned to you yet.</p>
+                    <p class="text-muted small">Contact your Product Owner to be added to a project.</p>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <!-- Footer -->
-      <div class="footer">
-        <p>
-          &copy; 2024 Agile Project Management Dashboard | Developed by {{
-          developer_name }}
+      <div style="text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <p style="font-size: 0.95rem; color: rgba(255, 255, 255, 0.9); text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
+          &copy; 2025 Agile Project Management Dashboard |
+          <strong style="color: #fff; font-weight: 700;">Powered by Innovation</strong>
         </p>
       </div>
     </div>
 
+    <!-- Bootstrap JS (Required for Dropdown) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-      document.getElementById('search-btn').addEventListener('click', function () {
-        const searchInput = document.getElementById('search-input').value.toLowerCase();
-        const filter = document.getElementById('search-filter').value;
-        const rows = document.querySelectorAll('.project-table tbody tr');
+      // Smooth scrolling
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
 
-        rows.forEach(row => {
-          const cell = row.querySelector(`td:nth-child(${filter === 'project_name' ? 1 : 
-            filter === 'product_manager' ? 2 : 
-            filter === 'start_date' ? 3 : 
-            filter === 'end_date' ? 4 : 
-            filter === 'status' ? 6 : 7})`);
-
-          if (cell && cell.textContent.toLowerCase().includes(searchInput)) {
-            row.style.display = '';
-          } else {
-            row.style.display = 'none';
+      // Loading state
+      document.querySelectorAll('a:not([href^="#"]):not(.dropdown-content a)').forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (!this.target || this.target === '_self') {
+            document.body.style.transition = 'opacity 0.2s';
+            document.body.style.opacity = '0.6';
           }
         });
+      });
+
+      // Auto-dismiss alerts
+      setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+          alert.style.transition = 'opacity 0.5s, transform 0.5s';
+          alert.style.opacity = '0';
+          alert.style.transform = 'translateY(-20px)';
+          setTimeout(() => alert.remove(), 500);
+        });
+      }, 5000);
+    </script>
+    
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      const socket = io();
+      
+      socket.on('connect', () => {
+        console.log('Connected to server');
+      });
+      
+      socket.on('refresh_data', (data) => {
+        console.log('Data updated, refreshing page...');
+        window.location.reload();
       });
     </script>
   </body>

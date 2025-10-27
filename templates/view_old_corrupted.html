@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Project - Agile Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/unified-theme.css') }}">
+    <style>
+
+</head>        .container {
+
+<body>            padding: 20px;
+
+    <!-- Header -->            max-width: 1400px;
+
+    <header class="dashboard-header">            margin: 0 auto;
+
+        <div class="header-left">        }
+
+            <img src="{{ url_for('static', filename='images/logo3.jpg') }}" alt="Logo" class="logo">        .section {
+
+            <h1><i class="fas fa-project-diagram"></i> Agile Project Management</h1>            margin-bottom: 40px;
+
+        </div>        }
+
+    </header>        .chart-group {
+
+            display: grid;
+
+    <!-- Top Bar -->            grid-template-columns: repeat(2, 1fr);
+
+    <div class="top-bar">            gap: 20px;
+
+        <div class="breadcrumb">            margin: 20px 0;
+
+            <i class="fas fa-home"></i>        }
+
+            <a href="/projects/{{user_role}}/{{user_id}}">Dashboard</a>        .card {
+
+            <i class="fas fa-chevron-right"></i>            background: white;
+
+            <span>View Project</span>            border-radius: 10px;
+
+        </div>            padding: 20px;
+
+        <div class="user-info">            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+            <span class="greeting">Hello, {{ user_name }}!</span>        }
+
+            <div class="dropdown">        .card h3 {
+
+                <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile" class="profile-pic">            margin-top: 0;
+
+                <div class="dropdown-content">            color: #2196F3;
+
+                    <a href="{{url_for('auth.logout')}}"><i class="fas fa-sign-out-alt"></i> Logout</a>            font-size: 1.2rem;
+
+                </div>            margin-bottom: 15px;
+
+            </div>            border-bottom: 2px solid #2196F3;
+
+        </div>            padding-bottom: 8px;
+
+    </div>        }
+
+        .card-description {
+
+    <!-- Main Content -->            margin: 10px 0;
+
+    <div class="container" style="max-width: 1400px; margin: 2rem auto; padding: 0 2rem;">            color: #666;
+
+        <!-- Project Header -->            font-size: 0.9rem;
+
+        <div class="page-header">            line-height: 1.4;
+
+            <div>        }
+
+                <h2><i class="fas fa-folder-open"></i> {{ project.ProjectName }}</h2>        /* Table Container Styles */
+
+                <p style="color: var(--text-secondary); margin-top: 0.5rem;">{{ project.ProjectDescription }}</p>/* Table Container Styles */
+
+            </div>.table-container {
+
+            <div style="display: flex; gap: 1rem;">    background: rgba(255, 255, 255, 0.9);
+
+                <a href="/editproject/{{ project.ProjectId }}" class="btn btn-primary">    border-radius: 15px;
+
+                    <i class="fas fa-edit"></i> Edit Project    padding: 25px;
+
+                </a>    margin: 20px 0;
+
+                <a href="/projects/{{user_role}}/{{user_id}}" class="btn btn-secondary">    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+                    <i class="fas fa-arrow-left"></i> Back}
+
+                </a>
+
+            </div>/* Table Header Section */
+
+        </div>.table-header {
+
+    font-size: 1.5rem;
+
+        <!-- Project Stats -->    color: #3949ab;
+
+        <div class="dashboard-stats" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">    margin-bottom: 20px;
+
+            <div class="stat-card">    padding: 10px 0;
+
+                <h3><i class="fas fa-calendar-alt"></i> Start Date</h3>    border-bottom: 3px solid #3949ab;
+
+                <p>{{ project.StartDate.strftime('%B %d, %Y') if project.StartDate else 'N/A' }}</p>    display: flex;
+
+            </div>    justify-content: space-between;
+
+            <div class="stat-card success">    align-items: center;
+
+                <h3><i class="fas fa-calendar-check"></i> End Date</h3>}
+
+                <p>{{ project.EndDate.strftime('%B %d, %Y') if project.EndDate else 'N/A' }}</p>
+
+            </div>/* Base Table Styles */
+
+            <div class="stat-card {% if project.Status == 'Active' %}success{% elif project.Status == 'On Hold' %}warning{% else %}info{% endif %}">table {
+
+                <h3><i class="fas fa-flag"></i> Status</h3>    width: 100%;
+
+                <p><span class="badge badge-{{ project.Status|lower|replace(' ', '-') }}">{{ project.Status }}</span></p>    border-collapse: separate;
+
+            </div>    border-spacing: 0;
+
+            <div class="stat-card info">    margin-bottom: 20px;
+
+                <h3><i class="fas fa-user-tie"></i> Product Owner</h3>    background: transparent;
+
+                <p>{{ project.product_owner.Name if project.product_owner else 'N/A' }}</p>}
+
+            </div>
+
+        </div>/* Table Header Cells */
+
+th {
+
+        <!-- Sprints Section -->    background: linear-gradient(135deg, #3949ab, #5c6bc0);
+
+        <div class="card" style="margin-bottom: 2rem;">    color: white;
+
+            <div class="card-header">    font-weight: 600;
+
+                <h3><i class="fas fa-bolt"></i> Sprints</h3>    text-transform: uppercase;
+
+            </div>    font-size: 0.9rem;
+
+            {% if sprints %}    padding: 15px;
+
+                <div class="table-responsive">    text-align: left;
+
+                    <table class="data-table">    letter-spacing: 0.5px;
+
+                        <thead>    border: none;
+
+                            <tr>}
+
+                                <th>#</th>
+
+                                <th><i class="fas fa-calendar-alt"></i> Start Date</th>/* First and Last Header Cells Rounded Corners */
+
+                                <th><i class="fas fa-calendar-check"></i> End Date</th>th:first-child {
+
+                                <th><i class="fas fa-bullseye"></i> Sprint Goal</th>    border-top-left-radius: 10px;
+
+                                <th><i class="fas fa-tasks"></i> User Stories</th>}
+
+                                <th><i class="fas fa-chart-pie"></i> Progress</th>
+
+                            </tr>th:last-child {
+
+                        </thead>    border-top-right-radius: 10px;
+
+                        <tbody>}
+
+                            {% for sprint in sprints %}
+
+                                <tr>/* Table Data Cells */
+
+                                    <td><strong>Sprint {{ loop.index }}</strong></td>td {
+
+                                    <td>{{ sprint.StartDate.strftime('%m/%d/%Y') if sprint.StartDate else 'N/A' }}</td>    padding: 12px 15px;
+
+                                    <td>{{ sprint.EndDate.strftime('%m/%d/%Y') if sprint.EndDate else 'N/A' }}</td>    border: none;
+
+                                    <td>{{ sprint.Goal }}</td>    font-size: 0.95rem;
+
+                                    <td>    color: #333;
+
+                                        {% set story_count = sprint.user_stories|length %}    background: white;
+
+                                        <span class="badge badge-info">{{ story_count }} Stories</span>}
+
+                                    </td>
+
+                                    <td>/* Alternating Row Colors */
+
+                                        {% set done = sprint.user_stories|selectattr('Status', 'equalto', 'Done')|list|length %}tr:nth-child(even) td {
+
+                                        {% set total = sprint.user_stories|length %}    background: linear-gradient(to right, #f5f7ff, #e8eaf6);
+
+                                        {% if total > 0 %}}
+
+                                            <div class="progress-bar-container">
+
+                                                <div class="progress-bar" style="width: {{ (done / total * 100)|int }}%"></div>/* Row Hover Effect */
+
+                                            </div>tr:hover td {
+
+                                            <small>{{ done }}/{{ total }} Complete ({{ (done / total * 100)|int }}%)</small>    background: linear-gradient(to right, #e3f2fd, #bbdefb);
+
+                                        {% else %}    transition: background-color 0.3s ease;
+
+                                            <span class="badge badge-secondary">No Stories</span>}
+
+                                        {% endif %}
+
+                                    </td>/* Last Row Rounded Corners */
+
+                                </tr>tr:last-child td:first-child {
+
+                            {% endfor %}    border-bottom-left-radius: 10px;
+
+                        </tbody>}
+
+                    </table>
+
+                </div>tr:last-child td:last-child {
+
+            {% else %}    border-bottom-right-radius: 10px;
+
+                <div class="empty-state">}
+
+                    <i class="fas fa-inbox fa-3x"></i>
+
+                    <p>No sprints created yet</p>/* Sprint Calendar Specific Styles */
+
+                </div>.sprint-calendar td {
+
+            {% endif %}    font-weight: 500;
+
+        </div>}
+
+
+
+        <!-- User Stories Section -->.sprint-calendar .sprint-no {
+
+        <div class="card">    color: #3949ab;
+
+            <div class="card-header">    font-weight: 600;
+
+                <h3><i class="fas fa-book"></i> User Stories</h3>}
+
+            </div>
+
+            {% if all_user_stories %}.sprint-calendar .date {
+
+                <div class="table-responsive">    color: #666;
+
+                    <table class="data-table">}
+
+                        <thead>
+
+                            <tr>.sprint-calendar .velocity {
+
+                                <th>#</th>    color: #2e7d32;
+
+                                <th><i class="fas fa-bolt"></i> Sprint</th>    font-weight: 600;
+
+                                <th><i class="fas fa-book-open"></i> User Story</th>}
+
+                                <th><i class="fas fa-star"></i> Story Points</th>
+
+                                <th><i class="fas fa-flag"></i> Status</th>/* User Stories Table Specific Styles */
+
+                                <th><i class="fas fa-user"></i> Assigned To</th>.user-stories td {
+
+                            </tr>    vertical-align: middle;
+
+                        </thead>}
+
+                        <tbody>
+
+                            {% for story in all_user_stories %}/* Status Badge Styles */
+
+                                <tr>.status {
+
+                                    <td>{{ loop.index }}</td>    padding: 6px 12px;
+
+                                    <td>    border-radius: 20px;
+
+                                        {% if story.sprint %}    font-weight: 500;
+
+                                            <span class="badge badge-primary">Sprint {{ sprints.index(story.sprint) + 1 }}</span>    font-size: 0.85rem;
+
+                                        {% else %}    display: inline-block;
+
+                                            <span class="badge badge-secondary">No Sprint</span>    text-transform: uppercase;
+
+                                        {% endif %}    letter-spacing: 0.5px;
+
+                                    </td>    text-align: center;
+
+                                    <td>{{ story.Story }}</td>    min-width: 100px;
+
+                                    <td>    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+                                        <span class="badge badge-info">{{ story.StoryPoints if story.StoryPoints else 0 }}</span>}
+
+                                    </td>
+
+                                    <td>.completed {
+
+                                        <span class="badge badge-{{ story.Status|lower|replace(' ', '-') }}">    background: linear-gradient(135deg, #43a047, #66bb6a);
+
+                                            {{ story.Status }}    color: white;
+
+                                        </span>}
+
+                                    </td>
+
+                                    <td>.in-progress {
+
+                                        {% if story.assigned_user %}    background: linear-gradient(135deg, #fb8c00, #ffa726);
+
+                                            {{ story.assigned_user.Name }}    color: white;
+
+                                        {% else %}}
+
+                                            <span class="text-muted">Unassigned</span>
+
+                                        {% endif %}.planned {
+
+                                    </td>    background: linear-gradient(135deg, #1e88e5, #42a5f5);
+
+                                </tr>    color: white;
+
+                            {% endfor %}}
+
+                        </tbody>
+
+                    </table>/* User ID and Assignee Styles */
+
+                </div>.user-id {
+
+    font-family: monospace;
+
+                <!-- User Story Analytics -->    font-weight: 600;
+
+                <div class="chart-grid" style="margin-top: 2rem;">    color: #3949ab;
+
+                    <div class="chart-container">}
+
+                        <h4><i class="fas fa-chart-pie"></i> Story Status Distribution</h4>
+
+                        <canvas id="statusChart"></canvas>.assignee {
+
+                    </div>    display: flex;
+
+                    <div class="chart-container">    align-items: center;
+
+                        <h4><i class="fas fa-chart-bar"></i> Story Points by Sprint</h4>    gap: 8px;
+
+                        <canvas id="sprintChart"></canvas>}
+
+                    </div>
+
+                </div>.assignee img {
+
+            {% else %}    width: 24px;
+
+                <div class="empty-state">    height: 24px;
+
+                    <i class="fas fa-inbox fa-3x"></i>    border-radius: 50%;
+
+                    <p>No user stories created yet</p>    object-fit: cover;
+
+                </div>}
+
+            {% endif %}
+
+        </div>/* Empty State Styling */
+
+.no-data {
+
+        <!-- Team Members Section -->    text-align: center;
+
+        {% if project.users %}    padding: 30px;
+
+        <div class="card" style="margin-top: 2rem;">    color: #666;
+
+            <div class="card-header">    font-style: italic;
+
+                <h3><i class="fas fa-users"></i> Team Members</h3>    background: #f5f5f5;
+
+            </div>    border-radius: 10px;
+
+            <div class="team-grid">}
+
+                {% for user in project.users %}
+
+                    <div class="team-member-card">/* Responsive Table Styles */
+
+                        <img src="{{ url_for('static', filename=user.profile_picture) if user.profile_picture else url_for('static', filename='images/profile.jpg') }}" alt="{{ user.Name }}">@media screen and (max-width: 768px) {
+
+                        <h4>{{ user.Name }}</h4>    .table-container {
+
+                        <p class="role"><i class="fas fa-briefcase"></i> {{ user.Role }}</p>        padding: 15px;
+
+                        <p class="email"><i class="fas fa-envelope"></i> {{ user.Email }}</p>        margin: 15px 0;
+
+                    </div>    }
+
+                {% endfor %}    
+
+            </div>    th, td {
+
+        </div>        padding: 10px;
+
+        {% endif %}        font-size: 0.9rem;
+
+    </div>    }
+
+    
+
+    <script>    .status {
+
+        // User Story Status Distribution Chart        padding: 4px 8px;
+
+        {% if all_user_stories %}        font-size: 0.8rem;
+
+        const statusData = {        min-width: 80px;
+
+            'To Do': {{ all_user_stories|selectattr('Status', 'equalto', 'To Do')|list|length }},    }
+
+            'In Progress': {{ all_user_stories|selectattr('Status', 'equalto', 'In Progress')|list|length }},    
+
+            'Done': {{ all_user_stories|selectattr('Status', 'equalto', 'Done')|list|length }}    .table-header {
+
+        };        font-size: 1.2rem;
+
+    }
+
+        const statusChart = new Chart(document.getElementById('statusChart'), {}
+
+            type: 'doughnut',        .header {
+
+            data: {          margin-top: 0px;
+
+                labels: Object.keys(statusData),            background: #3b5998;
+
+                datasets: [{            color: white;
+
+                    data: Object.values(statusData),            padding: 15px 20px;
+
+                    backgroundColor: ['#ed8936', '#4299e1', '#48bb78']            display: flex;
+
+                }]            align-items: center;
+
+            },            gap: 15px;
+
+            options: {        }
+
+                responsive: true,        .top-bar {
+
+                maintainAspectRatio: true,            background: white;
+
+                plugins: {            padding: 10px 20px;
+
+                    legend: {            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+                        position: 'bottom'        }
+
+                    }        
+
+                }        .section-title {
+
+            }            color: #333;
+
+        });            margin: 30px 0 20px;
+
+            font-size: 1.5rem;
+
+        // Story Points by Sprint Chart        }
+
+        {% if sprints %}    </style>
+
+        const sprintLabels = [{% for sprint in sprints %}'Sprint {{ loop.index }}'{{ ',' if not loop.last }}{% endfor %}];</head>
+
+        const sprintPoints = [<body>
+
+            {% for sprint in sprints %}    <!-- Header Section -->
+
+                {{ sprint.user_stories|sum(attribute='StoryPoints') or 0 }}{{ ',' if not loop.last }}    <div class="header">
+
+            {% endfor %}        <img src="{{ url_for('static', filename='images/logo3.jpg') }}" alt="Profile" class="profile-pic" />
+
+        ];        <h1>AGILE PROJECT MANAGEMENT DASHBOARD</h1>
+
+    </div>
+
+        const sprintChart = new Chart(document.getElementById('sprintChart'), {
+
+            type: 'bar',    <!-- Top Bar Section -->
+
+            data: {    <div class="top-bar">
+
+                labels: sprintLabels,        <div class="greeting">
+
+                datasets: [{            <span>Hello, {{ user_name }}</span>
+
+                    label: 'Story Points',            <div class="dropdown">
+
+                    data: sprintPoints,                <a href="{{ url_for('auth.login') }}">
+
+                    backgroundColor: 'rgba(102, 126, 234, 0.6)',                    <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile" class="profile-pic" />
+
+                    borderColor: 'rgba(102, 126, 234, 1)',                </a>
+
+                    borderWidth: 2                <div class="dropdown-content">
+
+                }]                    <a href="{{ url_for('auth.logout') }}" class="logout">Logout</a>
+
+            },                </div>
+
+            options: {            </div>
+
+                responsive: true,        </div>
+
+                maintainAspectRatio: true,    </div>
+
+                scales: {
+
+                    y: {    <!-- Main Content -->
+
+                        beginAtZero: true,    <div class="container">
+
+                        ticks: {        <h1>User Stories and Sprint Calendar for Project: {{ project.ProjectName }}</h1>
+
+                            stepSize: 1        <div style="display: flex; justify-content: center; align-items: center;">
+
+                        }          <a href="{{ url_for('summary') }}" class="btn btn-primary mb-4" 
+
+                    }             style="color: white; background-color: blue; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+
+                },              View summary
+
+                plugins: {          </a>
+
+                    legend: {      </div>
+
+                        display: false      
+
+                    }        <!-- User Stories Section -->
+
+                }        <div class="section">
+
+            }            <div class="table-container">
+
+        });                <div class="table-header">User Stories Overview</div>
+
+        {% endif %}                <table>
+
+        {% endif %}                    <thead>
+
+    </script>                        <tr>
+
+                            <th>User Story ID</th>
+
+    <style>                            <th>Description</th>
+
+        .chart-grid {                            <th>Status</th>
+
+            display: grid;                            <th>Assigned To</th>
+
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));                            <th>Sprint</th>
+
+            gap: 2rem;                        </tr>
+
+        }                    </thead>
+
+                    <tbody>
+
+        .chart-container {                        {% if userstories %}
+
+            background: var(--bg-light);                            {% for story in userstories %}
+
+            padding: 1.5rem;                                <tr>
+
+            border-radius: 12px;                                    <td>{{ story.us_id }}</td>
+
+        }                                    <td>{{ story.description }}</td>
+
+                                    <td>
+
+        .chart-container h4 {                                        <span class="status {% if story.status == 'Completed' %}completed{% elif story.status == 'In Progress' %}in-progress{% else %}planned{% endif %}">
+
+            color: var(--primary-gradient-start);                                            {{ story.status }}
+
+            margin-bottom: 1rem;                                        </span>
+
+        }                                    </td>
+
+                                    <td>{{ story.assignee }}</td>
+
+        .progress-bar-container {                                    <td>{{ story.sprint }}</td>
+
+            width: 100%;                                </tr>
+
+            height: 8px;                            {% endfor %}
+
+            background: var(--border-color);                        {% else %}
+
+            border-radius: 4px;                            <tr>
+
+            overflow: hidden;                                <td colspan="5" class="no-data">No user stories found for this project.</td>
+
+            margin-bottom: 0.25rem;                            </tr>
+
+        }                        {% endif %}
+
+                    </tbody>
+
+        .progress-bar {                </table>
+
+            height: 100%;            </div>
+
+            background: linear-gradient(90deg, var(--primary-gradient-start), var(--primary-gradient-end));
+
+            transition: width 0.3s ease;            <!-- User Stories Charts -->
+
+        }            <div class="chart-group">
+
+                <div class="card">
+
+        .team-grid {                    <h3>Task Status Distribution</h3>
+
+            display: grid;                    <canvas id="projectStatusChart"></canvas>
+
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));                    <p class="card-description">
+
+            gap: 1.5rem;                        Shows the current distribution of tasks across different status categories: Completed, In Progress, and Not Started. This helps track overall project completion status.
+
+        }                    </p>
+
+                </div>
+
+        .team-member-card {                <div class="card">
+
+            background: var(--bg-light);                    <h3>Team Performance</h3>
+
+            border-radius: 12px;                    <canvas id="teamPerformanceChart"></canvas>
+
+            padding: 1.5rem;                    <p class="card-description">
+
+            text-align: center;                        Visualizes team performance metrics, comparing completed tasks and stories across different teams. Helps identify high-performing teams and potential bottlenecks.
+
+            transition: var(--transition);                    </p>
+
+        }                </div>
+
+            </div>
+
+        .team-member-card:hover {        </div>
+
+            transform: translateY(-5px);
+
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);        <!-- Sprint Section -->
+
+        }        <div class="section">
+
+            <div class="table-container">
+
+        .team-member-card img {                <div class="table-header">Sprint Calendar</div>
+
+            width: 80px;                <table>
+
+            height: 80px;                    <thead>
+
+            border-radius: 50%;                        <tr>
+
+            object-fit: cover;                            <th>Sprint Number</th>
+
+            margin-bottom: 1rem;                            <th>Start Date</th>
+
+            border: 3px solid var(--primary-gradient-start);                            <th>End Date</th>
+
+        }                            <th>Velocity</th>
+
+                        </tr>
+
+        .team-member-card h4 {                    </thead>
+
+            color: var(--text-primary);                    <tbody>
+
+            margin-bottom: 0.5rem;                        {% if sprints %}
+
+        }                            {% for sprint in sprints %}
+
+                                <tr>
+
+        .team-member-card .role {                                    <td>{{ sprint.sprint_no }}</td>
+
+            color: var(--primary-gradient-start);                                    <td>{{ sprint.start_date }}</td>
+
+            font-weight: 600;                                    <td>{{ sprint.end_date }}</td>
+
+            margin-bottom: 0.25rem;                                    <td>{{ sprint.velocity }}</td>
+
+        }                                </tr>
+
+                            {% endfor %}
+
+        .team-member-card .email {                        {% else %}
+
+            color: var(--text-secondary);                            <tr>
+
+            font-size: 0.9rem;                                <td colspan="4" class="no-data">No sprint calendar data found for this project.</td>
+
+        }                            </tr>
+
+                        {% endif %}
+
+        .empty-state {                    </tbody>
+
+            text-align: center;                </table>
+
+            padding: 3rem;            </div>
+
+            color: var(--text-secondary);
+
+        }            <!-- Sprint Related Charts -->
+
+            <div class="chart-group">
+
+        .empty-state i {                <div class="card">
+
+            color: var(--border-color);                    <h3>Sprint Progress</h3>
+
+            margin-bottom: 1rem;                    <canvas id="sprintProgressChart"></canvas>
+
+        }                    <p class="card-description">
+
+                        Tracks the progress of each sprint as a percentage. This helps monitor if sprints are on track to meet their goals and identify any patterns in sprint completion rates.
+
+        @media (max-width: 768px) {                    </p>
+
+            .chart-grid {                </div>
+
+                grid-template-columns: 1fr;                <div class="card">
+
+            }                    <h3>Velocity Trend</h3>
+
+                                <canvas id="velocityChart"></canvas>
+
+            .team-grid {                    <p class="card-description">
+
+                grid-template-columns: 1fr;                        Shows the team's velocity across sprints, helping predict future sprint capacity and identify trends in team productivity over time.
+
+            }                    </p>
+
+        }                </div>
+
+    </style>            </div>
+
+</body>        </div>
+
+</html>
+
+        <!-- Burndown/Burnup Section -->
+        <div class="section">
+            <h2 class="section-title">Sprint Tracking Metrics</h2>
+            <div class="chart-group">
+                <div class="card">
+                    <h3>Burn Down Chart</h3>
+                    <canvas id="burnDownChart"></canvas>
+                    <p class="card-description">
+                        Tracks remaining work versus time in the sprint. The ideal burndown line shows expected progress, while the actual line shows real progress. Helps identify if the sprint is on track or falling behind.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>Burn Up Chart</h3>
+                    <canvas id="burnUpChart"></canvas>
+                    <p class="card-description">
+                        Shows the accumulation of completed work over time against the total scope. Useful for tracking overall project progress and scope changes across sprints.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Button -->
+        
+    </div>
+
+    <!-- Keep the existing script section -->
+    <script>
+        async function initCharts() {
+          try {
+            const response = await fetch("/api/chart-data");
+            const data = await response.json();
+    
+            // Extracting the relevant data for burn down chart
+            const labels = data.sprintData.map((d) => `Sprint ${d.sprintNo}`);
+            const estimatedEffortRemaining = data.sprintData.map(
+              (d) => d.estimatedEffort
+            );
+            const actualEffortRemaining = data.sprintData.map(
+              (d) => d.actualEffort
+            );
+    
+            const totalEstimatedEffort = estimatedEffortRemaining.reduce(
+              (sum, value) => sum + value,
+              0
+            );
+            const totalActualEffort = actualEffortRemaining.reduce(
+              (sum, value) => sum + value,
+              0
+            );
+    
+            // Burn Down Chart
+            // Burn Down Chart
+            new Chart(document.getElementById("burnDownChart"), {
+              type: "line",
+              data: {
+                labels: data.sprintData.map((d) => `Sprint ${d.sprintNo}`),
+                datasets: [
+                  {
+                    label: "Estimated Effort Remaining",
+                    data: data.sprintData.map(
+                      (d) => totalEstimatedEffort - d.estimatedEffort
+                    ),
+                    borderColor: "#2196F3",
+                    tension: 0.1,
+                    fill: false,
+                  },
+                  {
+                    label: "Actual Effort Remaining",
+                    data: data.sprintData.map(
+                      (d) => totalActualEffort - d.actualEffort
+                    ),
+                    borderColor: "#F44336",
+                    tension: 0.1,
+                    fill: false,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  title: { display: true, text: "Burn Down Chart" },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: "Effort Remaining",
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Time (Sprints)",
+                    },
+                  },
+                },
+              },
+            });
+    
+            // Burn Up Chart
+            new Chart(document.getElementById("burnUpChart"), {
+              type: "line",
+              data: {
+                labels: data.sprintData.map((d) => `Sprint ${d.sprintNo}`),
+                datasets: [
+                  {
+                    label: "Cumulative Estimated Effort",
+                    data: data.sprintData
+                      .map((d) => d.estimatedEffort)
+                      .reduce(
+                        (acc, val, i) => [...acc, (acc[i - 1] || 0) + val],
+                        []
+                      ),
+                    borderColor: "#4CAF50",
+                    tension: 0.1,
+                  },
+                  {
+                    label: "Cumulative Actual Effort",
+                    data: data.sprintData
+                      .map((d) => d.actualEffort)
+                      .reduce(
+                        (acc, val, i) => [...acc, (acc[i - 1] || 0) + val],
+                        []
+                      ),
+                    borderColor: "#FF9800",
+                    tension: 0.1,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  title: { display: true, text: "Burn Up Chart" },
+                },
+              },
+            });
+    
+            // Static Project Status Chart
+            new Chart(document.getElementById("projectStatusChart"), {
+              type: "doughnut",
+              data: {
+                labels: ["Completed", "In Progress", "Not Started"],
+                datasets: [
+                  {
+                    data: [1, 2, 2], // Static data representing the project counts
+                    backgroundColor: ["#4CAF50", "#FF9800", "#F44336"],
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: "Project Status Distribution",
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function (tooltipItem) {
+                        let dataset = tooltipItem.dataset;
+                        let total = dataset.data.reduce(
+                          (prev, curr) => prev + curr,
+                          0
+                        );
+                        let currentValue = dataset.data[tooltipItem.dataIndex];
+                        let percentage = ((currentValue / total) * 100).toFixed(
+                          2
+                        );
+                        return `${tooltipItem.label}: ${percentage}%`;
+                      },
+                    },
+                  },
+                  legend: {
+                    display: true,
+                    position: "top",
+                  },
+                },
+              },
+            });
+    
+            // Velocity Chart
+            new Chart(document.getElementById("velocityChart"), {
+              type: "bar",
+              data: {
+                labels: data.sprintData.map((d) => `Sprint ${d.sprintNo}`),
+                datasets: [
+                  {
+                    label: "Velocity",
+                    data: data.sprintData.map((d) => d.velocity),
+                    backgroundColor: "#2196F3",
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  title: { display: true, text: "Sprint Velocity Trend" },
+                },
+              },
+            });
+    
+            // Sprint Progress Chart
+            new Chart(document.getElementById("sprintProgressChart"), {
+              type: "line",
+              data: {
+                labels: data.sprintProgress.map((d) => `Sprint ${d.sprintNo}`),
+                datasets: [
+                  {
+                    label: "Progress",
+                    data: data.sprintProgress.map((d) => d.progress),
+                    borderColor: "#9C27B0",
+                    tension: 0.1,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  title: { display: true, text: "Sprint Progress" },
+                },
+                scales: {
+                  y: {
+                    min: 0,
+                    max: 100,
+                    ticks: {
+                      callback: (value) => `${value}%`,
+                    },
+                  },
+                },
+              },
+            });
+    
+            // Team Performance Chart
+            new Chart(document.getElementById("teamPerformanceChart"), {
+              type: "bar",
+              data: {
+                labels: data.teamPerformance.map((d) => d.team),
+                datasets: [
+                  {
+                    label: "Completed Tasks",
+                    data: data.teamPerformance.map((d) => d.completedTasks),
+                    backgroundColor: "#FF9800",
+                  },
+                  {
+                    label: "Completed Stories",
+                    data: data.teamPerformance.map((d) => d.completedStories),
+                    backgroundColor: "#4CAF50",
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  title: { display: true, text: "Team Performance" },
+                },
+              },
+            });
+          } catch (error) {
+            console.error("Error fetching chart data:", error);
+          }
+        }
+    
+        document.addEventListener("DOMContentLoaded", initCharts);
+      </script>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        &copy; 2024 Agile Project Management Dashboard. All Rights Reserved.
+    </div>
+</body>
+</html>
