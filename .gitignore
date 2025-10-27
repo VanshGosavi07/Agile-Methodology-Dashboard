@@ -2,48 +2,106 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
 
 # Virtual environments
 venv/
 env/
 .venv/
 .env/
+ENV/
+env.bak/
+venv.bak/
 
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
+.tox/
+.nox/
 
 # Environment variables
 .env
 .env.local
 .env.development
 .env.test
+.env.production
 
 # Database
 instance/
 *.db
 *.sqlite
+*.sqlite3
 
 # Logs
 *.log
+logs/
+pip-log.txt
 
-# CSV files
+# CSV files (user history)
 *.csv
+user_history.csv
+failed_login_history.csv
 
-# Reports
+# Reports & PDFs
 reports/
+*.pdf
+static/*.pdf
+static/login_report.pdf
 
-# Uploads
+# Uploads (user images)
 static/uploads/*.jpg
 static/uploads/*.jpeg
 static/uploads/*.png
 static/uploads/*.gif
+static/uploads/
+uploads/
+
+# Flask specific
+instance/
+.webassets-cache
+.flask_session/
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
 
 # OS
 .DS_Store
 Thumbs.db
+*.bak
+*.tmp
+
+# Python distribution
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Alembic (if re-added)
+alembic/versions/*.pyc
