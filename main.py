@@ -49,22 +49,11 @@ app = Flask(__name__)
 login_manager.init_app(app)
 login_manager.login_view = "auth.login"
 
-# Simple configuration for local development
-app.config["SECRET_KEY"] = "dev-8BYkEfBA6O6donzWlSihBXox7C0sKR6b-secure"
-app.config["SESSION_COOKIE_NAME"] = "agile_dashboard_session"
+# Load configuration from config.py
+from config import Config
+app.config.from_object(Config)
 
-# SQLite Database Configuration - Local Only
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(app.instance_path, 'global.db')}"
-os.makedirs(app.instance_path, exist_ok=True)
-print("Using SQLite database (local development)")
-
-# Email Configuration - Gmail
-EMAIL_CONFIG = {
-    "SENDER_EMAIL": "vanshgosavi777@gmail.com",
-    "SENDER_PASSWORD": "pfry ijwv scdb pcio"
-}
-
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+print("Using Neon PostgreSQL database (cloud-hosted)")
 
 db.init_app(app)
 socketio = SocketIO(app, cors_allowed_origins="*")

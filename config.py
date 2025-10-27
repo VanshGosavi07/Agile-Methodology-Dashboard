@@ -13,9 +13,13 @@ class Config:
     SESSION_COOKIE_SAMESITE = 'Lax'
     PERMANENT_SESSION_LIFETIME = timedelta(hours=24)
 
-    # SQLite Database - Local Only
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///instance/global.db'
+    # Neon PostgreSQL Database - Cloud Hosted
+    SQLALCHEMY_DATABASE_URI = 'postgresql://neondb_owner:npg_fQsLY0z9AKwB@ep-dark-bread-a16beev8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+    }
 
     # File Upload Settings
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
