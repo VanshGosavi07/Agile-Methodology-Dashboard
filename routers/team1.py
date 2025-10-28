@@ -16,6 +16,7 @@ from fpdf import FPDF
 from flask import send_file
 from plotly.graph_objects import Figure
 import traceback
+from cloudinary_storage import upload_profile_image, initialize_cloudinary
 
 
 
@@ -25,7 +26,7 @@ login_manager = LoginManager()
 login_bp = Blueprint('auth', __name__)
 
 
-os.makedirs('static/uploads', exist_ok=True)
+# Removed: os.makedirs('static/uploads', exist_ok=True) - No longer needed with Cloudinary
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
@@ -47,6 +48,19 @@ if not os.path.exists(CSV_FILE):
         writer = csv.writer(file)
         writer.writerow(["User ID","Username", "Role", "Action", "Timestamp", "IP Address"])
 
+def backup_csv_to_cloudinary(csv_file_path):
+    """Backup CSV file to Cloudinary Storage"""
+    try:
+        from cloudinary_storage import upload_csv_file, initialize_cloudinary
+        initialize_cloudinary()
+        success, result = upload_csv_file(csv_file_path)
+        if success:
+            print(f"[INFO] CSV backed up to Cloudinary: {result}")
+        else:
+            print(f"[WARNING] Failed to backup CSV to Cloudinary: {result}")
+    except Exception as e:
+        print(f"[ERROR] CSV backup error: {str(e)}")
+
 def log_to_csv(user_id, action):
     user = db.session.execute(db.Select(Users).where(Users.UserID==user_id)).scalar()
     print(user.UserName, user)
@@ -55,6 +69,9 @@ def log_to_csv(user_id, action):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         ip_address = request.remote_addr or "Unknown"
         writer.writerow([user_id, user.UserName, user.Role, action, timestamp, ip_address])
+    
+    # Backup to Cloudinary after logging
+    backup_csv_to_cloudinary(CSV_FILE)
 
 
 def get_history_from_csv(user_id):
@@ -94,6 +111,9 @@ def log_failed_login(username):
     with open(FAILED_LOGIN_CSV_FILE, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([username, timestamp, ip_address])
+    
+    # Backup to Cloudinary after logging
+    backup_csv_to_cloudinary(FAILED_LOGIN_CSV_FILE)
 
 
 
@@ -426,27 +446,28 @@ def add_user():
             approved = (role.lower() == "admin")
             
             # ========== Handle Profile Picture Upload ==========
-            filename = 'default_profile.jpg'  # Default profile picture
+            profile_picture_url = None  # Default - no profile picture
             file = request.files.get('file')
             
             if file and file.filename:
                 if allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    
-                    # Ensure upload directory exists
-                    upload_dir = 'static/uploads'
-                    if not os.path.exists(upload_dir):
-                        os.makedirs(upload_dir)
-                    
-                    filepath = os.path.join(upload_dir, filename)
-                    
                     try:
-                        file.save(filepath)
-                        print(f"[INFO] Profile picture saved: {filepath}")
+                        # Initialize Cloudinary
+                        initialize_cloudinary()
+                        
+                        # Upload to Cloudinary Storage
+                        success, result = upload_profile_image(file, None)  # user_id is None since user not created yet
+                        
+                        if success:
+                            profile_picture_url = result  # Cloudinary public URL
+                            print(f"[INFO] Profile picture uploaded to Cloudinary: {profile_picture_url}")
+                            flash("Profile picture uploaded successfully!", "success")
+                        else:
+                            print(f"[ERROR] Failed to upload profile picture to Cloudinary: {result}")
+                            flash("Profile picture upload failed. Proceeding without image.", "warning")
                     except Exception as file_error:
-                        print(f"[ERROR] Failed to save profile picture: {str(file_error)}")
-                        flash("Failed to upload profile picture. Using default.", "warning")
-                        filename = 'default_profile.jpg'
+                        print(f"[ERROR] Exception during profile picture upload: {str(file_error)}")
+                        flash("Profile picture upload skipped. Proceeding without image.", "info")
                 else:
                     flash("Invalid file type. Allowed: jpg, jpeg, png, gif", "error")
                     return redirect(url_for('auth.add_user'))
@@ -531,7 +552,7 @@ def add_user():
                 Role=role,
                 PhoneNumber=phone_number,
                 Approved=approved,
-                profile_picture='uploads/' + filename
+                profile_picture=profile_picture_url  # Store Cloudinary URL or None
             )
             
             # ========== Save to Database ==========
@@ -724,8 +745,9 @@ def verify_otp():
                         
                         print(f"[SUCCESS] User {user.UserName} logged in successfully")
                         
-                        # Redirect based on role
-                        if session.get('role') == 'admin':
+                        # Redirect based on role (case-insensitive check)
+                        user_role = session.get('role', '').lower()
+                        if user_role == 'admin':
                             return redirect(url_for('auth.admin_dashboard'))
                         else:
                             return redirect(f'/projects/{current_user.Role}/{current_user.UserID}')
@@ -1047,7 +1069,8 @@ def admin_dashboard():
         return send_file(pdf_path, as_attachment=True, mimetype='application/pdf', download_name='login_report.pdf')
 
 
-    if current_user.Role == 'admin':
+    # Check if current user is admin (case-insensitive)
+    if current_user.Role.lower() == 'admin':
         users = Users.query.all()
         return render_template('admin_dashboard.html', users=users, u=current_user, bar_chart=bar_graph_html, pie_chart=pie_graph_html, heatmap=heatmap_html)
     else:
@@ -1066,7 +1089,7 @@ def approve_organization(org_id):
     Returns:
         redirect: Back to admin dashboard with success/error message
     """
-    if current_user.Role != 'admin':
+    if current_user.Role.lower() != 'admin':
         flash("Unauthorized access. Admin privileges required.", "error")
         return redirect(url_for('team_1.dashboard'))
     
@@ -1113,7 +1136,7 @@ def reject_organization(org_id):
     Returns:
         redirect: Back to admin dashboard with success/error message
     """
-    if current_user.Role != 'admin':
+    if current_user.Role.lower() != 'admin':
         flash("Unauthorized access. Admin privileges required.", "error")
         return redirect(url_for('team_1.dashboard'))
     

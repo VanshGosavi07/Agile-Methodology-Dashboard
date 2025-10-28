@@ -226,6 +226,8 @@
             }
         }
     </style>
+    <!-- Global Loader Script -->
+    <script src="{{ url_for('static', filename='js/global-loader.js') }}"></script>
 </head>
 <body>
     <div class="auth-header">
@@ -258,7 +260,9 @@
                 </div>
             {% endif %}
 
-            <form action="/auth/" method="POST">
+            <form action="/auth/" method="POST" 
+                  data-loader-message="Logging In..." 
+                  data-loader-subtext="Please wait while we verify your credentials">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <div class="input-with-icon">

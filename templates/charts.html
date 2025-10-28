@@ -24,7 +24,9 @@
 
     <!-- Custom Theme -->      * {
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/unified-theme.css') }}">        margin: 0;
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/unified-theme.css') }}">
+    <!-- Global Loader Script -->
+    <script src="{{ url_for('static', filename='js/global-loader.js') }}"></script>
 
     <style>        padding: 0;
 
@@ -194,7 +196,7 @@
 
                     <button class="btn btn-link p-0 border-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">        border-radius: 25px;
 
-                        <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile" class="rounded-circle border-white" style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 3px solid white;">        padding: 25px;
+                        <img src="{% if current_user.profile_picture and current_user.profile_picture.startswith('http') %}{{ current_user.profile_picture }}{% else %}{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}{% endif %}" alt="Profile" class="rounded-circle border-white" style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 3px solid white;">        padding: 25px;
 
                     </button>        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 

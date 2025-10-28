@@ -577,6 +577,8 @@
             }
         }
     </style>
+    <!-- Global Loader Script -->
+    <script src="{{ url_for('static', filename='js/global-loader.js') }}"></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -587,7 +589,7 @@
         </a>
         <div class="navbar-right">
             <div class="navbar-user">
-                <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile">
+                <img src="{% if current_user.profile_picture and current_user.profile_picture.startswith('http') %}{{ current_user.profile_picture }}{% else %}{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}{% endif %}" alt="Profile">
                 <span>{{ current_user.UserName }}</span>
             </div>
             <form method="POST" action="{{ url_for('auth.logout') }}" style="margin: 0;">
@@ -603,7 +605,7 @@
         <div class="admin-header">
             <div class="admin-info">
                 <img
-                    src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}"
+                    src="{% if current_user.profile_picture and current_user.profile_picture.startswith('http') %}{{ current_user.profile_picture }}{% else %}{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}{% endif %}"
                     alt="Admin Profile"
                     class="admin-pic"
                 />

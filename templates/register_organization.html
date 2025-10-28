@@ -194,6 +194,8 @@
             }
         }
     </style>
+    <!-- Global Loader Script -->
+    <script src="{{ url_for('static', filename='js/global-loader.js') }}"></script>
 </head>
 <body>
     <div class="container">
@@ -210,7 +212,9 @@
             {% endif %}
         {% endwith %}
 
-        <form method="POST" action="{{ url_for('auth.register_organization') }}">
+        <form method="POST" action="{{ url_for('auth.register_organization') }}"
+              data-loader-message="Registering Organization..." 
+              data-loader-subtext="Please wait while we set up your organization">
             <div class="form-group">
                 <label for="org_name">Organization Name *</label>
                 <input type="text" id="org_name" name="org_name" required 

@@ -14,6 +14,12 @@
 
 ## 🧠 Core Features
 
+### ☁️ **100% Cloud-Based Infrastructure**
+- **Cloud Database**: Neon PostgreSQL - fully managed serverless PostgreSQL
+- **Cloud Storage**: Cloudinary for all file uploads (profile images, reports, CSV logs)
+- **Persistent Data**: No ephemeral storage - all data survives deployments and restarts
+- **Scalable**: Ready to deploy to Google Cloud, Heroku, AWS, or any cloud platform
+
 ### 🔐 **Multi-Role Authentication System**
 - **5 User Roles**: Admin, Product Owner, Scrum Master, Developer, Tester
 - **Role-Based Access Control (RBAC)**: Granular permissions for each role
@@ -113,7 +119,8 @@ Agile-Project-Management-Dashboard/
 | Layer              | Technology                                    |
 |--------------------|-----------------------------------------------|
 | **Backend**        | Flask 3.1.0, SQLAlchemy 2.0.36, Flask-Login  |
-| **Database**       | SQLite (Development), PostgreSQL-ready        |
+| **Database**       | Neon PostgreSQL (Cloud), SQLAlchemy ORM      |
+| **Cloud Storage**  | Cloudinary (Profile Images, Reports, CSVs)   |
 | **Frontend**       | HTML5, CSS3, Bootstrap 5.3.2, JavaScript     |
 | **Real-Time**      | Flask-SocketIO 5.3.6, python-socketio         |
 | **Charts/Graphs**  | Matplotlib 3.9.3 (lightweight)                |
@@ -122,15 +129,6 @@ Agile-Project-Management-Dashboard/
 | **Authentication** | BCrypt 5.0.0, Flask-Bcrypt                    |
 | **Email**          | Flask-Mail 0.9.1                              |
 | **Scheduling**     | Schedule 1.2.2                                |
-
----
-
-## ✅ Prerequisites
-
-- **Python 3.10+** 🐍
-- **Flask Framework** 🌐
-- **SQLite** (included) or **PostgreSQL** 💾
-- **Modern Web Browser** (Chrome, Firefox, Edge) 🌍
 
 ---
 
@@ -157,17 +155,49 @@ venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 ```
 
-### 4. **Set Environment Variables** (Optional)
+### 4. **Configure Environment Variables** (Required)
+
+Create a `.env` file in the project root with your secrets:
 
 ```bash
-set SECRET_KEY=your-secret-key-here
-set MAIL_SERVER=smtp.gmail.com
-set MAIL_PORT=587
-set MAIL_USERNAME=your-email@gmail.com
-set MAIL_PASSWORD=your-app-password
+# Copy .env.example to .env (if exists) or create new .env file
+# Add your configuration:
+
+SECRET_KEY=your-secret-key-here
+DATABASE_URL=your-neon-postgresql-connection-string
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=True
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_DEFAULT_SENDER=your-email@gmail.com
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
 ```
 
-### 5. **Initialize Database**
+⚠️ **Never commit `.env` file to Git!** (Already in `.gitignore`)
+
+### 5. **Configure Cloudinary Storage** (Required)
+
+Cloudinary is used for storing profile images, PDF reports, and CSV logs.
+
+```bash
+# 1. Go to Cloudinary Console: https://cloudinary.com/users/register/free
+# 2. Sign up for FREE account (10GB storage included)
+# 3. Get your credentials from Dashboard
+# 4. Add credentials to .env file (see above)
+```
+
+✨ **Free Tier Benefits:**
+- 10GB Storage FREE
+- 25 Credits/month FREE
+- No billing plan upgrade required
+- Global CDN delivery
+
+📖 **See `CLOUDINARY_MIGRATION.md` for complete Cloudinary setup guide**
+
+### 6. **Initialize Database**
 
 The database will be created automatically on first run.
 
@@ -175,7 +205,7 @@ The database will be created automatically on first run.
 python main.py
 ```
 
-### 6. **Access the Application**
+### 7. **Access the Application**
 
 🌍 Open [http://localhost:5000](http://localhost:5000) in your browser.
 

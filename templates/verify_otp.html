@@ -409,6 +409,8 @@
             }
         }
     </style>
+    <!-- Global Loader Script -->
+    <script src="{{ url_for('static', filename='js/global-loader.js') }}"></script>
 </head>
 <body>
     <div class="otp-container">
@@ -437,7 +439,9 @@
             {% endif %}
 
             <!-- Verify Form -->
-            <form action="{{ url_for('auth.verify_otp') }}" method="POST" id="verifyForm">
+            <form action="{{ url_for('auth.verify_otp') }}" method="POST" id="verifyForm"
+                  data-loader-message="Verifying OTP..." 
+                  data-loader-subtext="Please wait while we verify your code">
                 <div class="form-group">
                     <label for="otp">
                         <i class="fas fa-key"></i> Verification Code

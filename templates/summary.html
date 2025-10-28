@@ -376,7 +376,7 @@
     <div class="top-bar">
         <div class="greeting">
             <span>Hello, {{ user_name }}</span>
-            <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" 
+            <img src="{% if current_user.profile_picture and current_user.profile_picture.startswith('http') %}{{ current_user.profile_picture }}{% else %}{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}{% endif %}" 
                  alt="Profile" 
                  class="profile-pic" 
                  onclick="window.location.href='{{ url_for('auth.login') }}'" />
@@ -474,13 +474,15 @@
             </div>
         </div>
 
-        <!-- Export Section -->
+        <!-- Export Section (Only for Product Owner and Admin) -->
+        {% if can_generate_reports %}
         <div class="export-section">
             <h3><i class="fas fa-file-download"></i> Export Reports</h3>
-            <a href="{{ url_for('export_pdf') }}" class="download-btn">
+            <a href="{{ url_for('export_pdf') }}" class="download-btn" data-no-loader>
                 <i class="fas fa-download"></i> Download Report
             </a>
         </div>
+        {% endif %}
     </div>
 
     <!-- Footer -->
@@ -508,6 +510,7 @@
             
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', function(e) {
+                    // Show only the old loading overlay (not global loader)
                     loadingOverlay.classList.add('active');
                     
                     // Hide loader after PDF starts downloading (max 30 seconds)

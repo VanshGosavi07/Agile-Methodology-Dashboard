@@ -128,7 +128,7 @@ class Users(db.Model, UserMixin):
     DOB = db.Column(db.DateTime,nullable=True)
     login_time = db.Column(db.DateTime, nullable=True)
     logout_time = db.Column(db.DateTime, nullable=True)
-    profile_picture = db.Column(db.String(100))
+    profile_picture = db.Column(db.String(500))  # Increased for Cloudinary URLs
     IsActive = db.Column(db.Boolean, default=True)
     CreatedDate = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -210,7 +210,7 @@ class Reports(db.Model):
     __tablename__ = 'Reports'
     ReportId = db.Column(db.Integer, primary_key=True)
     Filename = db.Column(db.String(255), nullable=False)
-    Filepath = db.Column(db.String(255), nullable=False)
+    Filepath = db.Column(db.String(500), nullable=False)  # Increased for Cloudinary URLs
     GeneratedOn = db.Column(db.DateTime, default=datetime.utcnow)
     Frequency = db.Column(db.Enum(FrequencyEnum), nullable=False)
     ProjectId = db.Column(db.Integer, db.ForeignKey(

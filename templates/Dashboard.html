@@ -131,6 +131,9 @@
         }
       }
     </style>
+    
+    <!-- Global Loader Script -->
+    <script src="{{ url_for('static', filename='js/global-loader.js') }}"></script>
   </head>
   <body>
     <!-- Bootstrap Navbar with Enhanced Logout -->
@@ -151,7 +154,7 @@
           <!-- Dropdown Menu -->
           <div class="dropdown">
             <button class="btn btn-link p-0 border-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile" class="rounded-circle border-white" style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 3px solid white;">
+              <img src="{% if current_user.profile_picture and current_user.profile_picture.startswith('http') %}{{ current_user.profile_picture }}{% else %}{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}{% endif %}" alt="Profile" class="rounded-circle border-white" style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 3px solid white;">
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown" style="min-width: 200px;">
               <li class="px-3 py-2 border-bottom">

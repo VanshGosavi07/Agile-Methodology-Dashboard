@@ -12,6 +12,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <!-- Custom Theme -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/unified-theme.css') }}">
+    <!-- Global Loader Script -->
+    <script src="{{ url_for('static', filename='js/global-loader.js') }}"></script>
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -148,7 +150,7 @@
                 <!-- Dropdown Menu -->
                 <div class="dropdown">
                     <button class="btn btn-link p-0 border-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}" alt="Profile" class="rounded-circle border-white" style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 3px solid white;">
+                        <img src="{% if current_user.profile_picture and current_user.profile_picture.startswith('http') %}{{ current_user.profile_picture }}{% else %}{{ url_for('static', filename=current_user.profile_picture if current_user.profile_picture else 'uploads/newplot.png') }}{% endif %}" alt="Profile" class="rounded-circle border-white" style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 3px solid white;">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown" style="min-width: 200px;">
                         <li class="px-3 py-2 border-bottom">
@@ -228,7 +230,10 @@
                                 <td>
                                     {% if user_role|lower|replace(' ', '') in ['tester', 'developer', 'scrummaster'] %}
                                         <!-- Testers, Developers, and Scrum Masters can update status via dropdown if story is assigned to them -->
-                                        {% if story.assignee|lower == user_name|lower %}
+                                        {% set assignee_lower = story.assignee|lower|trim if story.assignee else '' %}
+                                        {% set user_full_name_lower = current_user_full_name|lower|trim if current_user_full_name else '' %}
+                                        {% set user_username_lower = current_user_username|lower|trim if current_user_username else '' %}
+                                        {% if assignee_lower == user_full_name_lower or assignee_lower == user_username_lower %}
                                         <select class="form-select form-select-sm status-badge status-{{ story.status.lower().replace(' ', '-') }}" 
                                                 onchange="updateStoryStatus({{ story.us_id }}, this.value)" 
                                                 style="cursor: pointer; max-width: 150px;">
@@ -242,6 +247,7 @@
                                         <span class="status-badge status-{{ story.status.lower().replace(' ', '-') }}">
                                             {{ story.status }}
                                         </span>
+                                        <small class="text-muted d-block" style="font-size: 0.7em;">Not assigned to you</small>
                                         {% endif %}
                                     {% else %}
                                         <!-- Admin and Product Owner see static status badge (they can edit via edit project page) -->
@@ -419,26 +425,46 @@
                 return;
             }
             
+            // Show loader
+            if (window.GlobalLoader) {
+                GlobalLoader.show('Updating Status...', 'Please wait');
+            }
+            
             fetch(`/api/update-story-status/${storyId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ status: newStatus })
+                body: JSON.stringify({ status: newStatus }),
+                skipLoader: true // We're using manual loader control
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok && response.status === 403) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Permission denied');
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
+                if (window.GlobalLoader) {
+                    GlobalLoader.hide();
+                }
+                
                 if (data.success) {
-                    alert(`Success! Story status updated to "${newStatus}"`);
+                    alert(`✅ Success! Story status updated to "${newStatus}"`);
                     location.reload(); // Reload to show updated status with correct badge color
                 } else {
-                    alert(`Error: ${data.message}`);
+                    alert(`❌ Error: ${data.message}`);
                     location.reload();
                 }
             })
             .catch(error => {
+                if (window.GlobalLoader) {
+                    GlobalLoader.hide();
+                }
                 console.error('Error updating story status:', error);
-                alert('An error occurred while updating the story status.');
+                alert(`❌ Error: ${error.message || 'An error occurred while updating the story status.'}`);
                 location.reload();
             });
         }
@@ -474,8 +500,15 @@
         
         async function initCharts() {
             try {
+                // Show loader for chart data
+                if (window.GlobalLoader) {
+                    GlobalLoader.show('Loading Charts...', 'Fetching project analytics');
+                }
+                
                 console.log('Fetching chart data for project:', projectId);
-                const response = await fetch(`/api/chart-data/${projectId}`);
+                const response = await fetch(`/api/chart-data/${projectId}`, {
+                    skipLoader: true // We're using manual loader control
+                });
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -793,17 +826,20 @@
                     }
                 });
 
+                // Hide loader after all charts are rendered
+                if (window.GlobalLoader) {
+                    GlobalLoader.hide();
+                }
+
             } catch (error) {
+                // Hide loader on error
+                if (window.GlobalLoader) {
+                    GlobalLoader.hide();
+                }
                 console.error("Error fetching chart data:", error);
                 console.error("Error details:", error.message);
                 alert("Failed to load chart data. Please check console for details and refresh the page.");
             }
-        }
-
-        document.addEventListener("DOMContentLoaded", initCharts);
-    </script>
-</body>
-</html>
         }
 
         document.addEventListener("DOMContentLoaded", initCharts);

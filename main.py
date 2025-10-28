@@ -16,6 +16,7 @@ import time
 from threading import Thread
 from io import BytesIO
 import traceback
+from cloudinary_storage import upload_report_pdf, upload_csv_file, initialize_cloudinary
 from models import (
     ProjectDetails,
     ProductOwner,
@@ -110,18 +111,30 @@ def projects(role, userid):
             flash("User not found", "error")
             return redirect(url_for('auth.login'))
         
-        # Check if user is admin or product owner (can see all projects)
+        # Role-based project filtering using ID comparison
         user_role = role.lower().replace(' ', '')
-        if user_role in ['admin', 'productowner']:
-            # Admin and Product Owner can see all projects
+        
+        if user_role == 'admin':
+            # Admin can see all projects
             projects_data = ProjectDetails.query.all()
-            print(f"[INFO] Admin/PO - Fetched {len(projects_data)} projects for user {userid}")
+            print(f"[INFO] Admin - Fetched {len(projects_data)} projects for user {userid}")
+            
+        elif user_role == 'productowner':
+            # Product Owner can only see projects created by them (using ProductOwnerId)
+            product_owner = ProductOwner.query.filter_by(Email=user.Email).first()
+            if product_owner:
+                projects_data = ProjectDetails.query.filter_by(ProductOwnerId=product_owner.ProductOwnerId).all()
+                print(f"[INFO] Product Owner (ProductOwnerId={product_owner.ProductOwnerId}) - Fetched {len(projects_data)} projects")
+            else:
+                projects_data = []
+                print(f"[WARNING] Product Owner not found for user {userid}")
+                
         else:
-            # Other users can only see projects they are assigned to
+            # Scrum Master, Developers, and Testers can only see projects assigned to them (using ID comparison via ProjectUsers)
             assigned_project_ids = db.session.query(ProjectUsers.ProjectId).filter_by(UserID=userid).all()
             assigned_project_ids = [pid[0] for pid in assigned_project_ids]
             projects_data = ProjectDetails.query.filter(ProjectDetails.ProjectId.in_(assigned_project_ids)).all()
-            print(f"[INFO] User {userid} - Fetched {len(projects_data)} assigned projects")
+            print(f"[INFO] {role} (UserID={userid}) - Fetched {len(projects_data)} assigned projects: {assigned_project_ids}")
         
         # Calculate project statistics based on filtered projects
         project_ids = [p.ProjectId for p in projects_data]
@@ -412,7 +425,23 @@ def edit_project(project_id):
                 flash("Project not found.", "error")
                 return redirect(url_for('projects', role=session.get('role'), userid=session.get('uid')))
 
-            # Allow all users to edit projects (removed permission check)
+            # Check permissions - only Product Owner and Admin can edit full project
+            user_role = session.get('role', '').lower().replace(' ', '')
+            user_id = session.get('uid')
+            
+            can_edit = False
+            if user_role in ['productowner', 'admin']:
+                # Product Owner and Admin can edit their own projects
+                if user_role == 'productowner':
+                    product_owner = ProductOwner.query.filter_by(UserID=user_id).first()
+                    if product_owner and project.ProductOwnerId == product_owner.ProductOwnerId:
+                        can_edit = True
+                elif user_role == 'admin':
+                    can_edit = True
+            
+            if not can_edit:
+                flash("You don't have permission to edit this project.", "error")
+                return redirect(url_for('projects', role=session.get('role'), userid=session.get('uid')))
 
             project_data = {
                 "ProjectId": project.ProjectId,
@@ -475,10 +504,26 @@ def edit_project(project_id):
         Access: Product Owner of the project, Admin
         """
         try:
-            # Removed permission check - all users can update projects
-
+            # Check permissions - only Product Owner and Admin can edit full project
+            user_role = session.get('role', '').lower().replace(' ', '')
+            user_id = session.get('uid')
+            
             # Fetch project or return 404
             project = ProjectDetails.query.get_or_404(project_id)
+            
+            can_edit = False
+            if user_role in ['productowner', 'admin']:
+                # Product Owner and Admin can edit their own projects
+                if user_role == 'productowner':
+                    product_owner = ProductOwner.query.filter_by(UserID=user_id).first()
+                    if product_owner and project.ProductOwnerId == product_owner.ProductOwnerId:
+                        can_edit = True
+                elif user_role == 'admin':
+                    can_edit = True
+            
+            if not can_edit:
+                flash("You don't have permission to edit this project.", "error")
+                return redirect(url_for('projects', role=session.get('role'), userid=session.get('uid')))
 
             # ========== Validate Project Basic Information ==========
             
@@ -838,7 +883,10 @@ def viewproject(project_id):
             flash("Please log in to view projects", "error")
             return redirect(url_for('auth.login'))
 
-        # Removed permission checks - all users have full access
+        # Get current user info for template
+        current_user = Users.query.filter_by(UserID=user_id).first()
+        current_user_name = current_user.Name if current_user and current_user.Name else session.get('username', 'Guest')
+        current_user_username = current_user.UserName if current_user and current_user.UserName else session.get('username', 'Guest')
 
         return render_template(
             'view.html', 
@@ -846,6 +894,8 @@ def viewproject(project_id):
             project=project, 
             sprints=sprintcalendar,
             user_name=session.get('username', 'Guest'),
+            current_user_full_name=current_user_name,
+            current_user_username=current_user_username,
             user_role=session.get('role', 'guest'),
             user_id=session.get('uid', 0),
             can_edit=can_edit,
@@ -937,22 +987,42 @@ def update_story_status(story_id):
         if user_role in ['admin', 'productowner']:
             # Admin and Product Owner can update any story status
             is_authorized = True
+            print(f"[INFO] User {user_id} ({user_role}) authorized to update any story")
         elif user_role in ['developer', 'tester', 'scrummaster']:
             # Developers, Testers, and Scrum Masters can only update stories assigned to them
-            # Check if the story is assigned to this user
+            # Check if the story is assigned to this user by finding the assigned user
+            is_authorized = False
+            
             if story.Assignee and user:
-                # Assignee field contains the user's name
-                is_authorized = (story.Assignee.lower() == user.Name.lower() or 
-                               story.Assignee.lower() == user.UserName.lower())
+                # Try to find the assigned user by name or username
+                assigned_user = Users.query.filter(
+                    db.or_(
+                        db.func.lower(Users.Name) == story.Assignee.lower().strip(),
+                        db.func.lower(Users.UserName) == story.Assignee.lower().strip()
+                    )
+                ).first()
+                
+                if assigned_user:
+                    # Compare user IDs (most reliable)
+                    is_authorized = (assigned_user.UserID == user_id)
+                    print(f"[DEBUG] Authorization check for {user_role}:")
+                    print(f"  Story ID: {story_id}")
+                    print(f"  Story Assignee: '{story.Assignee}'")
+                    print(f"  Assigned User ID: {assigned_user.UserID}")
+                    print(f"  Current User ID: {user_id}")
+                    print(f"  Is Authorized: {is_authorized}")
+                else:
+                    print(f"[WARNING] Could not find user matching assignee: '{story.Assignee}'")
             else:
-                is_authorized = False
+                print(f"[WARNING] Story has no assignee or user not found")
         else:
             is_authorized = False
+            print(f"[WARNING] Unknown role: {user_role}")
         
         if not is_authorized:
             return jsonify({
                 'success': False,
-                'message': 'You can only update status of user stories assigned to you'
+                'message': f'You can only update status of user stories assigned to you. This story is assigned to: {story.Assignee}'
             }), 403
         
         # Update only the status field
@@ -1255,8 +1325,9 @@ def summary():
             "tasks": task_summary
         }
 
-        # Allow all users to download reports
-        can_download_reports = True
+        # Only Product Owner can download reports
+        user_role = session.get('role', 'guest').lower().replace(' ', '')
+        can_download_reports = user_role in ['productowner', 'admin']
 
         return render_template(
             "summary.html",
@@ -1264,7 +1335,7 @@ def summary():
             user_role=session.get('role', 'guest'),
             user_id=session.get('uid', 0),
             summary_data=summary_data,
-            can_generate_reports=can_download_reports  # Changed: use download permission
+            can_generate_reports=can_download_reports
         )
 
     except Exception as e:
@@ -1279,7 +1350,7 @@ def summary():
 def export_pdf():
     """
     Export agile dashboard report as PDF file.
-    Only Product Owners can download reports.
+    Only Product Owners and Admins can download reports.
     
     Returns:
         file: PDF report as downloadable attachment
@@ -1288,6 +1359,15 @@ def export_pdf():
         Exception: If PDF generation fails, redirects to summary with error message
     """
     try:
+        # Check permissions - only Product Owner and Admin can export
+        user_role = session.get('role', '').lower().replace(' ', '')
+        if user_role not in ['productowner', 'admin']:
+            flash("You don't have permission to export reports.", "error")
+            return redirect(url_for('summary'))
+        
+        # Initialize Cloudinary
+        initialize_cloudinary()
+        
         # Generate PDF data
         pdf_data = generate_pdf()
         
@@ -1296,9 +1376,58 @@ def export_pdf():
             return redirect(url_for('summary'))
         
         # Create filename with current date
-        filename = f'agile_dashboard_report_{datetime.now().strftime("%Y%m%d")}.pdf'
+        filename = f'agile_dashboard_report_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
         
-        # Send file as attachment
+        # Save PDF temporarily to upload to Cloudinary
+        temp_dir = tempfile.mkdtemp()
+        temp_pdf_path = os.path.join(temp_dir, filename)
+        
+        try:
+            with open(temp_pdf_path, 'wb') as f:
+                f.write(pdf_data)
+            
+            # Upload to Cloudinary Storage
+            user_id = session.get('uid')
+            success, result = upload_report_pdf(temp_pdf_path, user_id)
+            
+            if success:
+                cloudinary_url = result
+                print(f"[INFO] Report uploaded to Cloudinary: {cloudinary_url}")
+                
+                # Optionally save report record to database
+                try:
+                    # Get the current user's first project (or you can modify to get specific project)
+                    project_user = ProjectUsers.query.filter_by(UserID=user_id).first()
+                    if project_user:
+                        report = Reports(
+                            Filename=filename,
+                            Filepath=cloudinary_url,  # Store Cloudinary URL
+                            Frequency=FrequencyEnum.MONTHLY,
+                            ProjectId=project_user.ProjectId,
+                            GeneratedOn=datetime.now()
+                        )
+                        db.session.add(report)
+                        db.session.commit()
+                        print(f"[INFO] Report record saved to database")
+                    else:
+                        print(f"[WARNING] No project found for user {user_id}, skipping database save")
+                except Exception as db_error:
+                    print(f"[WARNING] Failed to save report record: {str(db_error)}")
+                    # Continue even if database save fails
+            else:
+                print(f"[WARNING] Failed to upload report to Cloudinary: {result}")
+                # Continue with download even if Cloudinary upload fails
+        
+        finally:
+            # Clean up temp file
+            try:
+                if os.path.exists(temp_pdf_path):
+                    os.remove(temp_pdf_path)
+                os.rmdir(temp_dir)
+            except:
+                pass
+        
+        # Send file as attachment (from memory)
         return send_file(
             BytesIO(pdf_data),
             as_attachment=True,
