@@ -160,23 +160,55 @@ pip install -r requirements.txt
 Create a `.env` file in the project root with your secrets:
 
 ```bash
-# Copy .env.example to .env (if exists) or create new .env file
-# Add your configuration:
+# Copy .env.example to .env
+cp .env.example .env
 
+# Then edit .env with your actual credentials:
+```
+
+**Required Environment Variables:**
+
+```env
+# Flask Secret Key - Generate a strong random key
 SECRET_KEY=your-secret-key-here
-DATABASE_URL=your-neon-postgresql-connection-string
+
+# Database Configuration - Neon PostgreSQL
+DATABASE_URL=postgresql://user:password@host:port/database
+
+# Email Configuration - Gmail SMTP
 MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USE_TLS=True
 MAIL_USERNAME=your-email@gmail.com
 MAIL_PASSWORD=your-app-password
 MAIL_DEFAULT_SENDER=your-email@gmail.com
+
+# Secondary Email Account (for project assignments)
+SECONDARY_EMAIL=your-secondary-email@gmail.com
+SECONDARY_EMAIL_PASSWORD=your-secondary-app-password
+
+# Recipient Email for Reports
+REPORT_RECIPIENT_EMAIL=your-report-recipient@gmail.com
+
+# Cloudinary Configuration
 CLOUDINARY_CLOUD_NAME=your-cloud-name
 CLOUDINARY_API_KEY=your-api-key
 CLOUDINARY_API_SECRET=your-api-secret
 ```
 
-⚠️ **Never commit `.env` file to Git!** (Already in `.gitignore`)
+⚠️ **Security Best Practices:**
+- ✅ **NEVER commit `.env` file to Git** (Already in `.gitignore`)
+- ✅ Use `.env.example` as a template (safe to commit)
+- ✅ Generate strong SECRET_KEY: `python -c "import secrets; print(secrets.token_urlsafe(32))"`
+- ✅ Use Gmail App Passwords instead of regular passwords
+- ✅ Rotate credentials regularly
+- ✅ Keep separate `.env` files for dev/staging/production
+
+📧 **Gmail App Password Setup:**
+1. Go to Google Account Settings
+2. Enable 2-Factor Authentication
+3. Generate App Password for "Mail"
+4. Use this 16-character password in `.env`
 
 ### 5. **Configure Cloudinary Storage** (Required)
 

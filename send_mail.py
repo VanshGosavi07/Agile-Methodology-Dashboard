@@ -7,10 +7,14 @@ from email.message import EmailMessage
 import os
 import smtplib
 from email import encoders
+from dotenv import load_dotenv
 
-# Email Configuration - Gmail
-SENDER_EMAIL = "vanshgosavi777@gmail.com"
-SENDER_PASSWORD = "pfry ijwv scdb pcio"
+# Load environment variables
+load_dotenv()
+
+# Email Configuration - Loaded from .env
+SENDER_EMAIL = os.getenv('MAIL_USERNAME')
+SENDER_PASSWORD = os.getenv('MAIL_PASSWORD')
 
 def send_otp_email(email, otp):
     subject = 'Your OTP Code'
@@ -98,8 +102,8 @@ def user_approved(email, user):
 
 
 def send_emails_to_users(email_list, project_name, proj_desc, roles):
-    sender_email = "sukheshdasari@gmail.com"
-    sender_password = "drerssxnyxukxwlz"
+    sender_email = os.getenv('SECONDARY_EMAIL')
+    sender_password = os.getenv('SECONDARY_EMAIL_PASSWORD')
     subject = "Project Assignment Notification"
 
     try:
@@ -165,7 +169,7 @@ def send_email_with_report(report_type, file_path):
     try:
         sender_email = SENDER_EMAIL
         sender_password = SENDER_PASSWORD
-        recipient_email = "examplenamez543@gmail.com"
+        recipient_email = os.getenv('REPORT_RECIPIENT_EMAIL')
 
         latest_report = file_path
 
