@@ -25,6 +25,33 @@ CSV_FILE = "user_history.csv"
 login_manager = LoginManager()
 login_bp = Blueprint('auth', __name__)
 
+# Helper function to get CSV file path (use /tmp in production)
+def get_csv_path(filename):
+    """Returns writable path for CSV files - /tmp in production, local in dev"""
+    if os.environ.get('GAE_ENV', '').startswith('standard'):
+        # Google App Engine - use /tmp directory
+        tmp_path = os.path.join('/tmp', filename)
+        # Initialize CSV if it doesn't exist
+        if not os.path.exists(tmp_path):
+            with open(tmp_path, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                if 'user_history' in filename:
+                    writer.writerow(["User ID","Username", "Role", "Action", "Timestamp", "IP Address"])
+                elif 'failed_login' in filename:
+                    writer.writerow(["Username", "Timestamp", "IP Address"])
+        return tmp_path
+    else:
+        # Development - use local directory
+        if not os.path.exists(filename):
+            with open(filename, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                if 'user_history' in filename:
+                    writer.writerow(["User ID","Username", "Role", "Action", "Timestamp", "IP Address"])
+                elif 'failed_login' in filename:
+                    writer.writerow(["Username", "Timestamp", "IP Address"])
+        return filename
+
+
 
 # Removed: os.makedirs('static/uploads', exist_ok=True) - No longer needed with Cloudinary
 
@@ -43,10 +70,8 @@ def load_user(user_id):
 def otp_generator():
     return random.randint(100000, 999999)
 
-if not os.path.exists(CSV_FILE):
-    with open(CSV_FILE, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["User ID","Username", "Role", "Action", "Timestamp", "IP Address"])
+# CSV initialization removed - App Engine has read-only filesystem
+# CSV files will be managed in Cloudinary storage only
 
 def backup_csv_to_cloudinary(csv_file_path):
     """Backup CSV file to Cloudinary Storage"""
@@ -64,19 +89,21 @@ def backup_csv_to_cloudinary(csv_file_path):
 def log_to_csv(user_id, action):
     user = db.session.execute(db.Select(Users).where(Users.UserID==user_id)).scalar()
     print(user.UserName, user)
-    with open(CSV_FILE, mode='a', newline='') as file:
+    csv_path = get_csv_path(CSV_FILE)
+    with open(csv_path, mode='a', newline='') as file:
         writer = csv.writer(file)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         ip_address = request.remote_addr or "Unknown"
         writer.writerow([user_id, user.UserName, user.Role, action, timestamp, ip_address])
     
     # Backup to Cloudinary after logging
-    backup_csv_to_cloudinary(CSV_FILE)
+    backup_csv_to_cloudinary(csv_path)
 
 
 def get_history_from_csv(user_id):
     history = []
-    with open(CSV_FILE, mode='r') as file:
+    csv_path = get_csv_path(CSV_FILE)
+    with open(csv_path, mode='r') as file:
         csv_reader = csv.DictReader(file)
         for row in csv_reader:
             if int(row['User ID']) == user_id:
@@ -99,21 +126,19 @@ def history(user_id):
 
 FAILED_LOGIN_CSV_FILE = "failed_login_history.csv"
 
-
-if not os.path.exists(FAILED_LOGIN_CSV_FILE):
-    with open(FAILED_LOGIN_CSV_FILE, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Username", "Timestamp", "IP Address"])
+# CSV initialization removed - App Engine has read-only filesystem
+# CSV files will be managed in Cloudinary storage only
 
 def log_failed_login(username):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ip_address = request.remote_addr or "Unknown"
-    with open(FAILED_LOGIN_CSV_FILE, mode='a', newline='') as file:
+    csv_path = get_csv_path(FAILED_LOGIN_CSV_FILE)
+    with open(csv_path, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([username, timestamp, ip_address])
     
     # Backup to Cloudinary after logging
-    backup_csv_to_cloudinary(FAILED_LOGIN_CSV_FILE)
+    backup_csv_to_cloudinary(csv_path)
 
 
 
@@ -911,8 +936,11 @@ def reset_password():
 @login_bp.route('/admin_dashboard', methods=['GET', 'POST'])
 @login_required
 def admin_dashboard():
-    df = pd.read_csv('user_history.csv', on_bad_lines='skip')
-    failed_login_df = pd.read_csv('failed_login_history.csv', on_bad_lines='skip')
+    user_csv_path = get_csv_path('user_history.csv')
+    failed_csv_path = get_csv_path('failed_login_history.csv')
+    
+    df = pd.read_csv(user_csv_path, on_bad_lines='skip')
+    failed_login_df = pd.read_csv(failed_csv_path, on_bad_lines='skip')
 
     df['Timestamp'] = pd.to_datetime(df['Timestamp'])
     failed_login_df['Timestamp'] = pd.to_datetime(failed_login_df['Timestamp'])
