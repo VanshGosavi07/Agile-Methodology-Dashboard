@@ -2,8 +2,10 @@ import os
 from datetime import timedelta
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from .env file (development only)
+# In production (App Engine), env vars come from app.yaml
+if not os.getenv('GAE_ENV'):
+    load_dotenv()
 
 class Config:
     """
