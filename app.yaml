@@ -4,6 +4,33 @@ entrypoint: gunicorn -b :$PORT main:app --timeout 300 --workers 2
 # Environment variables
 env_variables:
   PYTHONUNBUFFERED: "1"
+  
+  # Flask Secret Key
+  SECRET_KEY: "dev-8BYkEfBA6O6donzWlSihBXox7C0sKR6b-secure"
+  
+  # Database Configuration (Neon PostgreSQL)
+  DATABASE_URL: "postgresql://neondb_owner:npg_fQsLY0z9AKwB@ep-dark-bread-a16beev8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+  
+  # Email Configuration (Gmail SMTP)
+  MAIL_SERVER: "smtp.gmail.com"
+  MAIL_PORT: "587"
+  MAIL_USE_TLS: "True"
+  MAIL_USERNAME: "vanshgosavi777@gmail.com"
+  MAIL_PASSWORD: "pfry ijwv scdb pcio"
+  MAIL_DEFAULT_SENDER: "vanshgosavi777@gmail.com"
+  
+  # Secondary Email Account
+  SECONDARY_EMAIL: "sukheshdasari@gmail.com"
+  SECONDARY_EMAIL_PASSWORD: "drerssxnyxukxwlz"
+  
+  # Recipient Email for Reports
+  REPORT_RECIPIENT_EMAIL: "vanshgosavi7@gmail.com"
+  
+  # Cloudinary Configuration
+  CLOUDINARY_CLOUD_NAME: "day2zovp3"
+  CLOUDINARY_API_KEY: "995247322466511"
+  CLOUDINARY_API_SECRET: "fT4mrDtIog4EXnCu1DlV3QKFGV0"
+  CLOUDINARY_URL: "cloudinary://995247322466511:fT4mrDtIog4EXnCu1DlV3QKFGV0@day2zovp3"
 
 # Instance configuration
 instance_class: F2
