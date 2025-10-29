@@ -32,6 +32,10 @@ htmlcov/
 .env.test
 .env.production
 
+# Environment setup scripts (if they contain real secrets)
+set_env_vars.sh
+set_env_vars.bat
+
 # Database
 instance/
 *.db

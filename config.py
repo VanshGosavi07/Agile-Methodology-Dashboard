@@ -12,7 +12,11 @@ class Config:
     """
     SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-key-for-dev')
     SESSION_COOKIE_NAME = 'agile_dashboard_session'
-    SESSION_COOKIE_SECURE = False
+    
+    # Security settings - adjust for production
+    # On App Engine, use secure cookies if using HTTPS
+    is_production = os.getenv('GAE_ENV', '').startswith('standard')
+    SESSION_COOKIE_SECURE = is_production  # True on App Engine (HTTPS)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     PERMANENT_SESSION_LIFETIME = timedelta(hours=24)
@@ -42,9 +46,15 @@ class Config:
     CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
     CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
 
-    # Debug Settings
-    DEBUG = True
+    # Debug Settings - Automatically disable in production
+    DEBUG = not is_production  # False on App Engine, True locally
     TESTING = False
+    
+    # Production optimizations
+    if is_production:
+        # Optimize for production
+        SQLALCHEMY_ENGINE_OPTIONS['pool_size'] = 5
+        SQLALCHEMY_ENGINE_OPTIONS['max_overflow'] = 10
 
 
 # Single configuration for development

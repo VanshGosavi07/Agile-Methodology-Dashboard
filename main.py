@@ -2011,4 +2011,14 @@ if __name__ == '__main__':
     print("="*50)
     print("🚀 Starting Agile Dashboard Application")
     print("="*50)
-    socketio.run(app, debug=True)
+    
+    # Check if running on Google App Engine
+    port = int(os.environ.get('PORT', 5000))
+    
+    # For production (App Engine), use eventlet worker
+    if os.environ.get('GAE_ENV', '').startswith('standard'):
+        print("Running on Google App Engine")
+        socketio.run(app, host='0.0.0.0', port=port, debug=False)
+    else:
+        # For local development
+        socketio.run(app, debug=True)
